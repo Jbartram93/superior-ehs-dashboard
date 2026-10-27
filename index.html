@@ -1,1 +1,122 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><title>Superior EHS Board</title><script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script><style>*{box-sizing:border-box;margin:0;padding:0}body{background:#1e293b;color:#e2e8f0;font-family:-apple-system,Segoe UI,Roboto,sans-serif;padding:24px}h1{font-size:24px;margin-bottom:4px}.sub{color:#94a3b8;font-size:14px;margin-bottom:20px}.kpi-row{display:flex;gap:16px;margin-bottom:20px}.kpi-card{background:#334155;border-radius:12px;padding:16px 20px;flex:1;border:1px solid #475569}.kpi-label{font-size:12px;color:#94a3b8;text-transform:uppercase;letter-spacing:1px}.kpi-value{font-size:32px;font-weight:800;color:#f8fafc;margin:4px 0}.kpi-sub{font-size:12px;color:#64748b}.card{background:#334155;border-radius:12px;padding:20px;margin-bottom:16px;border:1px solid #475569}h2{font-size:14px;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}#chart{width:100%;height:450px}.footer{color:#64748b;font-size:12px;text-align:center;margin-top:20px}td{padding:6px 0;border-bottom:1px solid #475569;font-size:14px}</style></head><body><h1>Superior Huntingdon Composites</h1><div class="sub">EHS Performance Dashboard · Updated Oct 27, 2026</div><div class="kpi-row"><div class="kpi-card"><div class="kpi-label">YTD Recordables</div><div class="kpi-value">4</div><div class="kpi-sub">Jan-Oct 2026</div></div><div class="kpi-card"><div class="kpi-label">Loss Time</div><div class="kpi-value">3</div><div class="kpi-sub">3 recordables with days away</div></div><div class="kpi-card"><div class="kpi-label">Near Misses</div><div class="kpi-value">21</div><div class="kpi-sub">Reported YTD</div></div><div class="kpi-card"><div class="kpi-label">Industry Benchmark</div><div class="kpi-value">3.3</div><div class="kpi-sub">NAICS 326199</div></div></div><div class="card"><h2>Monthly Recordable Incidents</h2><div id="chart"></div></div><div class="card"><h2>Incident Patterns</h2><table style="width:100%;border-collapse:collapse"><tr style="color:#94a3b8"><td><b>Department</b></td><td><b>Count</b></td><td><b>%</b></td></tr><tr><td>D team oven</td><td>8</td><td>32%</td></tr><tr><td>F team oven</td><td>4</td><td>16%</td></tr><tr><td>C team forming</td><td>4</td><td>16%</td></tr><tr><td>Finishing</td><td>2</td><td>8%</td></tr><tr><td>Other</td><td>7</td><td>28%</td></tr></table></div><div class="footer">Source: 2026 Safety Alert List</div><script>var d=[1,0,0,0,1,0,0,0,1,1,0,0];var m=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];var tr={x:m,y:d,type:"bar",marker:{color:"#f59e0b"},name:"2026"};var ly={paper_bgcolor:"#334155",plot_bgcolor:"#334155",font:{color:"#e2e8f0",size:12},xaxis:{gridcolor:"#475569"},yaxis:{gridcolor:"#475569",title:"Incidents"},margin:{t:20,r:20,b:40,l:50},shapes:[{type:"line",x0:-0.5,y0:3.3/12,x1:11.5,y1:3.3/12,line:{color:"#ef4444",width:2,dash:"dash"}}],annotations:[{x:11.5,y:3.3/12,xanchor:"left",yanchor:"bottom",text:"Industry avg 3.3/yr",font:{color:"#ef4444",size:11},showarrow:false}]};Plotly.newPlot("chart",[tr],ly,{responsive:true,displayModeBar:false});</script></body></html>
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Superior EHS Board</title>
+<script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#1e293b;color:#e2e8f0;font-family:-apple-system,Segoe UI,Roboto,sans-serif;padding:24px}
+h1{font-size:24px;margin-bottom:4px}
+.sub{color:#94a3b8;font-size:14px;margin-bottom:20px}
+.kpi-row{display:flex;gap:16px;margin-bottom:20px}
+.kpi-card{background:#334155;border-radius:12px;padding:16px 20px;flex:1;border:1px solid #475569}
+.kpi-label{font-size:12px;color:#94a3b8;text-transform:uppercase;letter-spacing:1px}
+.kpi-value{font-size:32px;font-weight:800;color:#f8fafc;margin:4px 0}
+.kpi-sub{font-size:12px;color:#64748b}
+.card{background:#334155;border-radius:12px;padding:20px;margin-bottom:16px;border:1px solid #475569}
+h2{font-size:14px;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+.chart-container{width:100%;height:400px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{color:#94a3b8;text-align:left;padding:8px 6px;border-bottom:2px solid #475569;font-size:11px;text-transform:uppercase;letter-spacing:1px}
+td{padding:6px;border-bottom:1px solid #475569}
+.num{text-align:center;font-weight:700;font-variant-numeric:tabular-nums}
+.bar-cell{min-width:120px}
+.bar{display:inline-block;height:14px;border-radius:3px;margin-right:6px;vertical-align:middle}
+.footer{color:#64748b;font-size:12px;text-align:center;margin-top:20px;padding-top:16px;border-top:1px solid #475569}
+.insight{background:#2d3a4f;border-left:3px solid #f59e0b;padding:12px 16px;margin-bottom:16px;border-radius:6px;font-size:14px;line-height:1.4}
+.insight b{color:#f59e0b}
+</style></head><body>
+<h1>Superior Huntingdon Composites</h1>
+<div class="sub">EHS Performance Dashboard · Data from 2026 Safety Alert List</div>
+
+<div class="kpi-row">
+<div class="kpi-card"><div class="kpi-label">YTD Recordables</div><div class="kpi-value">4</div><div class="kpi-sub">Jan-Oct 2026 · 3 loss time + 1 recordable</div></div>
+<div class="kpi-card"><div class="kpi-label">Near Misses</div><div class="kpi-value">21</div><div class="kpi-sub">Reported · 84% of all incidents</div></div>
+<div class="kpi-card"><div class="kpi-label">YTD TRIR (est.)</div><div class="kpi-value">~3.5</div><div class="kpi-sub">Need total hours for exact rate</div></div>
+<div class="kpi-card"><div class="kpi-label">Industry Benchmark</div><div class="kpi-value">3.3</div><div class="kpi-sub">NAICS 326199 · Verify from loss runs</div></div>
+</div>
+
+<div class="card"><h2>Cumulative Recordables YTD — 2026 vs Industry Benchmark</h2><div id="cumChart" class="chart-container"></div></div>
+
+<div class="insight"><b>Key Insight:</b> 4 recordables through 10 months. If the trend holds flat through Nov-Dec, you'll finish the year at 4 — above the industry benchmark of 3.3/yr. Focus on the 4th quarter to close the gap.</div>
+
+<div class="card">
+<h2>Incident Patterns — From Safety Alert List</h2>
+<table>
+<tr><th>Department</th><th class="num">Count</th><th>%</th><th>Bar</th></tr>
+<tr><td>D team oven</td><td class="num">8</td><td class="num">32%</td><td class="bar-cell"><div class="bar" style="width:96px;background:#f59e0b"></div></td></tr>
+<tr><td>F team oven</td><td class="num">4</td><td class="num">16%</td><td class="bar-cell"><div class="bar" style="width:48px;background:#3b82f6"></div></td></tr>
+<tr><td>C team forming</td><td class="num">4</td><td class="num">16%</td><td class="bar-cell"><div class="bar" style="width:48px;background:#8b5cf6"></div></td></tr>
+<tr><td>Finishing / Post oven</td><td class="num">4</td><td class="num">16%</td><td class="bar-cell"><div class="bar" style="width:48px;background:#ef4444"></div></td></tr>
+<tr><td>Other (Maintenance, Office, Parking, Cleanup)</td><td class="num">5</td><td class="num">20%</td><td class="bar-cell"><div class="bar" style="width:60px;background:#64748b"></div></td></tr>
+</table>
+</div>
+
+<div class="card">
+<h2>Body Part Analysis</h2>
+<table>
+<tr><th>Body Part</th><th class="num">Count</th><th>%</th><th>Bar</th></tr>
+<tr><td>Hand / Finger</td><td class="num">6</td><td class="num">24%</td><td class="bar-cell"><div class="bar" style="width:72px;background:#f59e0b"></div></td></tr>
+<tr><td>Knee / Leg</td><td class="num">4</td><td class="num">16%</td><td class="bar-cell"><div class="bar" style="width:48px;background:#3b82f6"></div></td></tr>
+<tr><td>Arm / Shoulder</td><td class="num">3</td><td class="num">12%</td><td class="bar-cell"><div class="bar" style="width:36px;background:#8b5cf6"></div></td></tr>
+<tr><td>Head / Eye / Face</td><td class="num">4</td><td class="num">16%</td><td class="bar-cell"><div class="bar" style="width:48px;background:#ef4444"></div></td></tr>
+<tr><td>Other (Back, Groin, Stomach)</td><td class="num">8</td><td class="num">32%</td><td class="bar-cell"><div class="bar" style="width:96px;background:#64748b"></div></td></tr>
+</table>
+</div>
+
+<div class="card">
+<h2>Employee Tenure at Time of Incident</h2>
+<table>
+<tr><th>Tenure</th><th class="num">Count</th><th>%</th><th>Bar</th></tr>
+<tr><td>&lt; 1 month</td><td class="num">2</td><td class="num">8%</td><td class="bar-cell"><div class="bar" style="width:24px;background:#f59e0b"></div></td></tr>
+<tr><td>1-3 months</td><td class="num">7</td><td class="num">28%</td><td class="bar-cell"><div class="bar" style="width:84px;background:#3b82f6"></div></td></tr>
+<tr><td>3-6 months</td><td class="num">4</td><td class="num">16%</td><td class="bar-cell"><div class="bar" style="width:48px;background:#8b5cf6"></div></td></tr>
+<tr><td>6-12 months</td><td class="num">5</td><td class="num">20%</td><td class="bar-cell"><div class="bar" style="width:60px;background:#ef4444"></div></td></tr>
+<tr><td>1-2 years</td><td class="num">1</td><td class="num">4%</td><td class="bar-cell"><div class="bar" style="width:12px;background:#64748b"></div></td></tr>
+<tr><td>2+ years</td><td class="num">6</td><td class="num">24%</td><td class="bar-cell"><div class="bar" style="width:72px;background:#10b981"></div></td></tr>
+</table>
+</div>
+
+<div class="card">
+<h2>Recordable Incidents (Detail)</h2>
+<table>
+<tr><th>Date</th><th>Employee</th><th>Type</th><th>Department</th><th>Description</th></tr>
+<tr><td>1/8/26</td><td>Aaron Smith</td><td>Loss Time</td><td>F team oven</td><td>Hand caught in crush roller while gauging</td></tr>
+<tr><td>5/5/26</td><td>Breanna Pauley</td><td>Recordable</td><td>C team forming</td><td>Glass fiber entered left eye</td></tr>
+<tr><td>9/24/26</td><td>David Jordan</td><td>Lost Time</td><td>F team oven</td><td>Overexertion reaching for hoist</td></tr>
+<tr><td>10/19/26</td><td>Drake Duncan</td><td>Loss Time</td><td>F team oven</td><td>Shoulder injury during cup placement</td></tr>
+</table>
+</div>
+
+<div class="footer">Data source: 2026 Safety Alert List (25 incidents logged YTD) · Superior Huntingdon Composites · NAICS 326199</div>
+
+<script>
+// Cumulative YTD chart
+var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+var cum26 = [1,1,1,1,2,2,2,2,3,4,4,4];  // Running total through Oct
+var cum25 = [0,0,0,0,0,0,0,0,0,0,0,0];  // Fill from loss runs
+var bench = 3.3;
+
+var trace26 = {x: months, y: cum26, mode: "lines+markers", name: "2026 YTD",
+  line: {color: "#f59e0b", width: 3}, marker: {color: "#f59e0b", size: 8, line: {color: "#1e293b", width: 2}}};
+var trace25 = {x: months, y: cum25, mode: "lines+markers", name: "2025 YTD",
+  line: {color: "#3b82f6", width: 2, dash: "dot"}, marker: {color: "#3b82f6", size: 6}};
+
+var layout = {
+  paper_bgcolor: "#334155", plot_bgcolor: "#334155",
+  font: {color: "#e2e8f0", size: 12},
+  xaxis: {gridcolor: "#475569"}, yaxis: {gridcolor: "#475569", title: "Cumulative Recordables", dtick: 1},
+  margin: {t: 30, r: 30, b: 40, l: 60},
+  shapes: [{
+    type: "line", x0: -0.5, y0: bench, x1: 11.5, y1: bench,
+    line: {color: "#ef4444", width: 2, dash: "dash"}
+  }],
+  annotations: [{
+    x: 11.5, y: bench, xanchor: "left", yanchor: "bottom",
+    text: "Industry benchmark " + bench + "/yr", font: {color: "#ef4444", size: 12},
+    showarrow: false
+  }],
+  hovermode: "x unified"
+};
+
+Plotly.newPlot("cumChart", [trace26, trace25], layout, {responsive: true, displayModeBar: false});
+</script>
+</body></html>
