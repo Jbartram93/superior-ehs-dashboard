@@ -1,122 +1,250 @@
 <!DOCTYPE html>
-<html><head><meta charset="utf-8"><title>Superior EHS Board</title>
-<script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Superior EHS — My Day</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:#1e293b;color:#e2e8f0;font-family:-apple-system,Segoe UI,Roboto,sans-serif;padding:24px}
-h1{font-size:24px;margin-bottom:4px}
-.sub{color:#94a3b8;font-size:14px;margin-bottom:20px}
-.kpi-row{display:flex;gap:16px;margin-bottom:20px}
-.kpi-card{background:#334155;border-radius:12px;padding:16px 20px;flex:1;border:1px solid #475569}
-.kpi-label{font-size:12px;color:#94a3b8;text-transform:uppercase;letter-spacing:1px}
-.kpi-value{font-size:32px;font-weight:800;color:#f8fafc;margin:4px 0}
-.kpi-sub{font-size:12px;color:#64748b}
-.card{background:#334155;border-radius:12px;padding:20px;margin-bottom:16px;border:1px solid #475569}
-h2{font-size:14px;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
-.chart-container{width:100%;height:400px}
-table{width:100%;border-collapse:collapse;font-size:13px}
-th{color:#94a3b8;text-align:left;padding:8px 6px;border-bottom:2px solid #475569;font-size:11px;text-transform:uppercase;letter-spacing:1px}
-td{padding:6px;border-bottom:1px solid #475569}
-.num{text-align:center;font-weight:700;font-variant-numeric:tabular-nums}
-.bar-cell{min-width:120px}
-.bar{display:inline-block;height:14px;border-radius:3px;margin-right:6px;vertical-align:middle}
-.footer{color:#64748b;font-size:12px;text-align:center;margin-top:20px;padding-top:16px;border-top:1px solid #475569}
-.insight{background:#2d3a4f;border-left:3px solid #f59e0b;padding:12px 16px;margin-bottom:16px;border-radius:6px;font-size:14px;line-height:1.4}
-.insight b{color:#f59e0b}
-</style></head><body>
-<h1>Superior Huntingdon Composites</h1>
-<div class="sub">EHS Performance Dashboard · Data from 2026 Safety Alert List</div>
+body{background:#0a0a1a;color:#e2e8f0;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;font-size:16px;padding:16px;min-height:100vh}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;border-bottom:2px solid #ff00ff;padding-bottom:10px}
+.logo{height:32px;opacity:0.7;filter:drop-shadow(0 0 4px #ff00ff)}
+.date-big{font-size:18px;font-weight:700;color:#ffcc00}
+.weekday{font-size:13px;color:#00ffcc;text-transform:uppercase;letter-spacing:1px}
+.tab-bar{display:flex;gap:4px;margin-bottom:16px}
+.tab{flex:1;padding:8px 4px;text-align:center;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;background:#1e293b;border:1px solid #475569;border-radius:8px;color:#94a3b8;cursor:pointer}
+.tab.active{background:rgba(255,0,255,0.15);border-color:#ff00ff;color:#ff00ff;box-shadow:0 0 10px rgba(255,0,255,0.2)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.card{background:rgba(10,5,30,0.88);border:1px solid #ff00ff;border-radius:8px;padding:12px 14px;margin-bottom:12px;box-shadow:0 0 8px rgba(255,0,255,0.12)}
+.card h2{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#ff00ff;margin-bottom:8px;font-weight:700}
+.prio-row{display:flex;align-items:flex-start;padding:6px 0;border-bottom:1px solid rgba(255,0,255,0.1);font-size:13px;line-height:1.3;gap:8px}
+.prio-row:last-child{border-bottom:none}
+.prio-chk{width:20px;height:20px;border:2px solid #ff00ff;border-radius:4px;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-top:1px;background:transparent;font-size:12px;color:#00ffcc}
+.prio-chk.checked{background:rgba(0,255,204,0.15);border-color:#00ffcc}
+.prio-chk.checked:after{content:"\2713";font-weight:bold}
+.prio-text{flex:1}
+.prio-text.done{text-decoration:line-through;opacity:0.5}
+.wday{background:rgba(0,0,0,0.3);border-radius:6px;padding:6px 4px;margin-bottom:4px;border:1px solid rgba(255,0,255,0.1)}
+.wday-today{border-color:#ff00ff;background:rgba(255,0,255,0.06)}
+.wday-head{font-size:10px;font-weight:700;color:#0066ff;text-transform:uppercase;text-align:center;margin-bottom:4px}
+.wdate{display:block;font-size:16px;font-weight:900;color:#ffcc00}
+.wday-today .wday-head{color:#ff00ff}
+.wevent{font-size:11px;padding:2px 0;border-bottom:1px solid rgba(255,0,255,0.08)}
+.wevent:last-child{border-bottom:none}
+.wtime{font-weight:700;color:#00ffff;font-size:10px;display:block}
+.all-day-tag{font-weight:700;color:#8b5cf6;font-size:9px;text-transform:uppercase;letter-spacing:0.5px;background:rgba(255,0,255,0.08);padding:1px 4px;border-radius:2px}
+.gantt{overflow-x:auto}
+.g-bar{display:flex;align-items:center;margin:4px 0;padding:4px 0;font-size:11px}
+.g-label{width:120px;flex-shrink:0;color:#e2e8f0;font-weight:600}
+.g-track{flex:1;height:18px;background:rgba(0,0,0,0.3);border-radius:3px;position:relative;overflow:hidden}
+.g-fill{height:100%;border-radius:3px;min-width:4px;position:absolute;left:0;top:0}
+.g-fill.open{background:linear-gradient(90deg,#ff00ff,#f59e0b)}
+.g-fill.active{background:linear-gradient(90deg,#f59e0b,#00ffcc)}
+.g-fill.done{background:#22c55e}
+.g-fill.assess{background:#3b82f6}
+.btn{background:rgba(255,0,255,0.12);border:1px solid #ff00ff;border-radius:8px;padding:10px;text-align:center;font-size:13px;color:#00ffcc;font-weight:600;margin-top:8px;cursor:pointer}
+.btn:hover{background:rgba(255,0,255,0.2)}
+input,textarea{width:100%;padding:8px;margin:4px 0 8px;background:#1e293b;border:1px solid #475569;border-radius:6px;color:#e2e8f0;font-size:13px}
+.footer{color:#64748b;font-size:11px;text-align:center;margin-top:16px}
+</style>
+</head>
+<body>
 
-<div class="kpi-row">
-<div class="kpi-card"><div class="kpi-label">YTD Recordables</div><div class="kpi-value">4</div><div class="kpi-sub">Jan-Oct 2026 · 3 loss time + 1 recordable</div></div>
-<div class="kpi-card"><div class="kpi-label">Near Misses</div><div class="kpi-value">21</div><div class="kpi-sub">Reported · 84% of all incidents</div></div>
-<div class="kpi-card"><div class="kpi-label">YTD TRIR (est.)</div><div class="kpi-value">~3.5</div><div class="kpi-sub">Need total hours for exact rate</div></div>
-<div class="kpi-card"><div class="kpi-label">Industry Benchmark</div><div class="kpi-value">3.3</div><div class="kpi-sub">NAICS 326199 · Verify from loss runs</div></div>
+<div class="header">
+  <div>
+    <div class="weekday" id="weekday"></div>
+    <div class="date-big" id="datebig"></div>
+  </div>
+  <img class="logo" src="https://shcomposites.com/wp-content/uploads/superior-huntingdon-composites-265.jpg" alt="SC">
 </div>
 
-<div class="card"><h2>Cumulative Recordables YTD — 2026 vs Industry Benchmark</h2><div id="cumChart" class="chart-container"></div></div>
-
-<div class="insight"><b>Key Insight:</b> 4 recordables through 10 months. If the trend holds flat through Nov-Dec, you'll finish the year at 4 — above the industry benchmark of 3.3/yr. Focus on the 4th quarter to close the gap.</div>
-
-<div class="card">
-<h2>Incident Patterns — From Safety Alert List</h2>
-<table>
-<tr><th>Department</th><th class="num">Count</th><th>%</th><th>Bar</th></tr>
-<tr><td>D team oven</td><td class="num">8</td><td class="num">32%</td><td class="bar-cell"><div class="bar" style="width:96px;background:#f59e0b"></div></td></tr>
-<tr><td>F team oven</td><td class="num">4</td><td class="num">16%</td><td class="bar-cell"><div class="bar" style="width:48px;background:#3b82f6"></div></td></tr>
-<tr><td>C team forming</td><td class="num">4</td><td class="num">16%</td><td class="bar-cell"><div class="bar" style="width:48px;background:#8b5cf6"></div></td></tr>
-<tr><td>Finishing / Post oven</td><td class="num">4</td><td class="num">16%</td><td class="bar-cell"><div class="bar" style="width:48px;background:#ef4444"></div></td></tr>
-<tr><td>Other (Maintenance, Office, Parking, Cleanup)</td><td class="num">5</td><td class="num">20%</td><td class="bar-cell"><div class="bar" style="width:60px;background:#64748b"></div></td></tr>
-</table>
+<div class="tab-bar">
+  <div class="tab active" onclick="swichTab('day')">MY DAY</div>
+  <div class="tab" onclick="swichTab('week')">WEEK</div>
+  <div class="tab" onclick="swichTab('gantt')">GANTT</div>
 </div>
 
-<div class="card">
-<h2>Body Part Analysis</h2>
-<table>
-<tr><th>Body Part</th><th class="num">Count</th><th>%</th><th>Bar</th></tr>
-<tr><td>Hand / Finger</td><td class="num">6</td><td class="num">24%</td><td class="bar-cell"><div class="bar" style="width:72px;background:#f59e0b"></div></td></tr>
-<tr><td>Knee / Leg</td><td class="num">4</td><td class="num">16%</td><td class="bar-cell"><div class="bar" style="width:48px;background:#3b82f6"></div></td></tr>
-<tr><td>Arm / Shoulder</td><td class="num">3</td><td class="num">12%</td><td class="bar-cell"><div class="bar" style="width:36px;background:#8b5cf6"></div></td></tr>
-<tr><td>Head / Eye / Face</td><td class="num">4</td><td class="num">16%</td><td class="bar-cell"><div class="bar" style="width:48px;background:#ef4444"></div></td></tr>
-<tr><td>Other (Back, Groin, Stomach)</td><td class="num">8</td><td class="num">32%</td><td class="bar-cell"><div class="bar" style="width:96px;background:#64748b"></div></td></tr>
-</table>
+<!-- TAB 1: MY DAY -->
+<div id="tab-day" class="tab-content active">
+  <div class="card">
+    <h2>TOAY'S CHECLIST</h2>
+    <div id="priorities-list"></div>
+  </div>
+  <div class="card">
+    <h2>TOAY'S CALENDAR</h2>
+    <div id="todays-meetings"></div>
+  </div>
+  <div class="card">
+    <h2>QUIC-ADD</h2>
+    <input type="text" id="quick-task" placeholder="e.g. Call vendor about blasting...">
+    <button class="btn" onclick="addTask()">+ Add to Priorities</button>
+  </div>
 </div>
 
-<div class="card">
-<h2>Employee Tenure at Time of Incident</h2>
-<table>
-<tr><th>Tenure</th><th class="num">Count</th><th>%</th><th>Bar</th></tr>
-<tr><td>&lt; 1 month</td><td class="num">2</td><td class="num">8%</td><td class="bar-cell"><div class="bar" style="width:24px;background:#f59e0b"></div></td></tr>
-<tr><td>1-3 months</td><td class="num">7</td><td class="num">28%</td><td class="bar-cell"><div class="bar" style="width:84px;background:#3b82f6"></div></td></tr>
-<tr><td>3-6 months</td><td class="num">4</td><td class="num">16%</td><td class="bar-cell"><div class="bar" style="width:48px;background:#8b5cf6"></div></td></tr>
-<tr><td>6-12 months</td><td class="num">5</td><td class="num">20%</td><td class="bar-cell"><div class="bar" style="width:60px;background:#ef4444"></div></td></tr>
-<tr><td>1-2 years</td><td class="num">1</td><td class="num">4%</td><td class="bar-cell"><div class="bar" style="width:12px;background:#64748b"></div></td></tr>
-<tr><td>2+ years</td><td class="num">6</td><td class="num">24%</td><td class="bar-cell"><div class="bar" style="width:72px;background:#10b981"></div></td></tr>
-</table>
+<!-- TAB 2: WEEK -->
+<div id="tab-week" class="tab-content">
+  <div class="card">
+    <h2>THIS WEE</h2>
+    <div id="week-calendar"></div>
+  </div>
 </div>
 
-<div class="card">
-<h2>Recordable Incidents (Detail)</h2>
-<table>
-<tr><th>Date</th><th>Employee</th><th>Type</th><th>Department</th><th>Description</th></tr>
-<tr><td>1/8/26</td><td>Aaron Smith</td><td>Loss Time</td><td>F team oven</td><td>Hand caught in crush roller while gauging</td></tr>
-<tr><td>5/5/26</td><td>Breanna Pauley</td><td>Recordable</td><td>C team forming</td><td>Glass fiber entered left eye</td></tr>
-<tr><td>9/24/26</td><td>David Jordan</td><td>Lost Time</td><td>F team oven</td><td>Overexertion reaching for hoist</td></tr>
-<tr><td>10/19/26</td><td>Drake Duncan</td><td>Loss Time</td><td>F team oven</td><td>Shoulder injury during cup placement</td></tr>
-</table>
+<!-- TAB 3: GANTT -->
+<div id="tab-gantt" class="tab-content">
+  <div class="card">
+    <h2>EHS PROJECS TIMELINE</h2>
+    <div class="gantt" id="gantt-chart"></div>
+  </div>
 </div>
 
-<div class="footer">Data source: 2026 Safety Alert List (25 incidents logged YTD) · Superior Huntingdon Composites · NAICS 326199</div>
+<div class="footer">Built Nov 02, 12:00 AM ET · Tap checkbox to mark done</div>
 
 <script>
-// Cumulative YTD chart
-var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-var cum26 = [1,1,1,1,2,2,2,2,3,4,4,4];  // Running total through Oct
-var cum25 = [0,0,0,0,0,0,0,0,0,0,0,0];  // Fill from loss runs
-var bench = 3.3;
+// ===== DATA =====
+const proiorities = [
+  "Shrink wrap machine safety zone — rails/tape/barrier (before John returns)",
+  "Furnace walkway fall protection — dig in personally",
+  "Chain railings & swing gates — follow up with Bryan",
+  "Dry ice blasting — schedule vendor site visit",
+  "Survey to Greg — get green light on anonymous employee survey",
+  "Insurance claim — redo/open enrollment (reminder daily)",
+  "Safety Walkthrough — get organized with Greg (Thurs 10:30am)"
+];
 
-var trace26 = {x: months, y: cum26, mode: "lines+markers", name: "2026 YTD",
-  line: {color: "#f59e0b", width: 3}, marker: {color: "#f59e0b", size: 8, line: {color: "#1e293b", width: 2}}};
-var trace25 = {x: months, y: cum25, mode: "lines+markers", name: "2025 YTD",
-  line: {color: "#3b82f6", width: 2, dash: "dot"}, marker: {color: "#3b82f6", size: 6}};
+// Load checked state from localStorage
+function loadChecked() {
+  try { return JSON.parse(localStorage.getItem('ehsChecked')||'[]'); }
+  catch(e){ return []; }
+}
+function saveChecked(arr) {
+  localStorage.setItem('ehsChecked', JSON.stringify(arr));
+}
 
-var layout = {
-  paper_bgcolor: "#334155", plot_bgcolor: "#334155",
-  font: {color: "#e2e8f0", size: 12},
-  xaxis: {gridcolor: "#475569"}, yaxis: {gridcolor: "#475569", title: "Cumulative Recordables", dtick: 1},
-  margin: {t: 30, r: 30, b: 40, l: 60},
-  shapes: [{
-    type: "line", x0: -0.5, y0: bench, x1: 11.5, y1: bench,
-    line: {color: "#ef4444", width: 2, dash: "dash"}
-  }],
-  annotations: [{
-    x: 11.5, y: bench, xanchor: "left", yanchor: "bottom",
-    text: "Industry benchmark " + bench + "/yr", font: {color: "#ef4444", size: 12},
-    showarrow: false
-  }],
-  hovermode: "x unified"
-};
+function rendePriorities() {
+  const list = document.getElementById('priorities-list');
+  const checked = loadChecked();
+  list.innerHTML = '';
+  priorities.forEach((p,i) => {
+    const done = checked.includes(i);
+    const row = document.createElement('div');
+    row.className = 'prio-row';
+    row.innerHTML = '<div class="prio-chk' + (done?' checked':'') + '" data-idx="' + i + '" onclick="oggleCheck(this)"></div><div class="prio-text' + (done?' done':'') + '">' + p + '</div>';
+    list.appendChild(row);
+  });
+}
 
-Plotly.newPlot("cumChart", [trace26, trace25], layout, {responsive: true, displayModeBar: false});
+function toggleCheck(el) {
+  const idx = parseInt(el.dataset.idx);
+  let checked = loadChecked();
+  if (checked.includes(idx)) {
+    checked = checked.filter(i => i !== idx);
+  } else {
+    checked.push(idx);
+  }
+  saveChecked(checked);
+  renderPriorities();
+}
+
+function addTask() {
+  const inp = document.getElementById('quick-task');
+  const t = inp.value.trim();
+  if (!t) return;
+  priorities.unshift(t);
+  renderPriorities();
+  inp.value = '';
+}
+
+// ===== CALENDAR DATA =====
+// This loads from the server at build time - meetings are embedded here
+const meetings = JSON.parse([{"date": "2026-10-28", "time": "12:00 PM", "title": "Chili Cookout", "loc": "Break Room"}, {"date": "2026-10-28", "time": "9:00 AM", "title": "SCC Production Call (Teams)", "loc": "Teams"}, {"date": "2026-10-29", "time": "10:30 AM", "title": "Safety Walkthrough"}, {"date": "2026-10-29", "time": "All Day", "title": "Board of Directors Site Visit"}, {"date": "2026-10-30", "time": "1:00 PM", "title": "Weekly Planning Meeting", "loc": "Conf Room"}, {"date": "2026-10-30", "time": "1:30 PM", "title": "Monthly Maintenance Meeting", "loc": "Conf Room"}, {"date": "2026-10-30", "time": "2:30 PM", "title": "Projects Meeting", "loc": "Conf Room"}, {"date": "2026-10-31", "time": "", "title": "\ud83c\udf83 Trick or Treat \ud83c\udf83"}, {"date": "2026-11-02", "time": "10:00 AM", "title": "Teams \u2014 Logan Wright (KSS) New Hire Safety Partnership", "loc": "Teams"}, {"date": "2026-11-02", "time": "7:45 AM", "title": "New Hire Orientation \u2014 Conference Room", "loc": "Conf Room"}, {"date": "2026-11-02", "time": "3:30 PM", "title": "Teams \u2014 Express Temp Agency Meeting", "loc": "Teams"}, {"date": "2026-11-03", "time": "7:30 AM", "title": "Supervisors Meeting (Teams)", "loc": "Teams"}, {"date": "2026-11-03", "time": "2:30 PM", "title": "Succession Planning", "loc": "Conf Room"}, {"date": "2026-11-04", "time": "9:00 AM", "title": "SCC Production Call (Teams)", "loc": "Teams"}, {"date": "2026-11-04", "time": "5:00 PM", "title": "Carvana Delivery \ud83d\ude97"}, {"date": "2026-11-03", "time": "All Day", "title": "Send Chad Doordash \ud83c\udf81"}, {"date": "2026-11-05", "time": "10:30 AM", "title": "Safety Walkthrough", "loc": ""}, {"date": "2026-11-05", "time": "2:00 PM", "title": "Weekly Planning Meeting", "loc": "Conf Room"}]);
+const today = "2026-11-02";
+
+function renderTodaysMeetings() {
+  const div = document.getElementById('todays-meetings');
+  const todayEvents = meetings.filter(m => m.date === today).sort((a,b) => {
+    if (a.time === 'All Day' || !a.time) return -1;
+    if (b.time === 'All Day' || !b.time) return 1;
+    return a.time.localeCompare(b.time);
+  });
+  if (todayEvents.length === 0) {
+    div.innerHTML = '<div class="empty">No meetings today</div>';
+    return;
+  }
+  div.innerHTML = todayEvents.map(m => {
+    const timeHtml = m.time === 'All Day' || !m.time ? '<span class="all-day-tag">ALL DAY</span>' : '<span class="wtime">' + m.time + '</span>';
+    const loc = m.loc ? ' (' + m.loc + ')' : '';
+    return '<div class="wevent">' + timeHtml + ' ' + m.title + loc + '</div>';
+  }).join('');}
+
+function renderWeek() {
+  const div = document.getElementById('week-calendar');
+  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  let html = '';
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(today);
+    d.setDate(d.getDate() + i);
+    const iso = d.toISOString().splitt('T')[0];
+    const label = i === 0 ? 'Today' : days[d.getDay()];
+    const dayEvents = meetings.filter(m => m.date === iso).sort((a,b) => {
+      if (a.time === 'All Day' || !a.time) return -1;
+      if (b.time === 'All Day' || !b.time) return 1;
+      return a.time.localeCompare(b.time);
+    });
+    html += '<div class="wday' + (i===0?' wday-today':'') + '"><div class="wday-head">' + label + '<span class="wdate">' + d.getDate() + '</span></div>';
+    if (dayEvents.length === 0) {
+      html += '<div class="wevent" style="color:#64748b;font-size:10px">--</div>';
+    } else {
+      dayEvents.forEach(m => {
+        const t = m.time === 'All Day' || !m.time ? '<span class="all-day-tag">ALL DAY</span>' : '<span class="wtime">' + m.time + '</span>';
+        const l = m.loc ? ' (' + m.loc + ')' : '';
+        html += '<div class="wevent">' + t + ' ' + m.title + l + '</div>';
+      });
+    }
+    html += '</div>';
+  }
+  div.innerHTML = html;
+}
+
+function renderGantt() {
+  const div = document.getElementById('gantt-chart');
+  const projects = [
+    {id:'P-001',name:'Shrink wrap barrier',status:'open',start:0,dur:2},
+    {id:'P-002',name:'Dry ice blasting',status:'open',start:0,dur:4},
+    {id:'P-003',name:'KSS partnership',status:'active',start:0,dur:3},
+    {id:'P-004',name:'Training matrix',status:'open',start:0,dur:6},
+    {id:'P-005',name:'Vest program pilot',status:'open',start:1,dur:4},
+    {id:'P-006',name:'Anonymous survey',status:'open',start:1,dur:3},
+    {id:'P-007',name:'Corrective action system',status:'active',start:0,dur:2},
+    {id:'P-011',name:'Furnace railings/gates',status:'open',start:0,dur:3},
+    {id:'P-012',name:'Walkway fall protection',status:'open',start:0,dur:3},
+    {id:'P-009',name:'Saw + vacuum',status:'open',start:0,dur:3},
+    {id:'P-010',name:'Hydration stations',status:'open',start:0,dur:2},
+    {id:'P-008',name:'Huntingdon PA transition',status:'open',start:4,dur:6},
+  ];
+  div.innerHTML = projects.map(p => {
+    const leftPct = (p.start / 12) * 100;
+    const widthPct = (p.dur / 12) * 100;
+    return '<div class="g-bar"><div class="g-label">' + p.id + ' ' + p.name + '</div><div class="g-track"><div class="g-fill ' + p.status + '" style="left:' + leftPct + '%;width:' + widthPct + '%"></div></div></div>';
+  }).join('');
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelector('.tab[onclick*="' + tab + '"]').classList.add('active');
+  document.getElementById('tab-' + tab).classList.add('active');
+}
+
+// Init
+document.getElementById('weekday').textContent = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][new Date().getDay()];
+document.getElementById('datebig').textContent = new Date().toLocaleDateString('en-US',{month:'long',day:'numeric'});
+renderPriorities();
+renderTodayMeetings();
+renderWeek();
+renderGantt();
 </script>
-</body></html>
+</body>
+</html>
