@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Superior EHS — My Day</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0a0a1a;color:#e2e8f0;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;font-size:16px;padding:16px;min-height:100vh}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;border-bottom:2px solid #ff00ff;padding-bottom:10px}
+.logo{height:32px;opacity:0.7;filter:drop-shadow(0 0 4px #ff00ff)}
+.date-big{font-size:18px;font-weight:700;color:#ffcc00}
+.weekday{font-size:13px;color:#00ffcc;text-transform:uppercase;letter-spacing:1px}
+.tab-bar{display:flex;gap:4px;margin-bottom:16px}
+.tab{flex:1;padding:8px 4px;text-align:center;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;background:#1e293b;border:1px solid #475569;border-radius:8px;color:#94a3b8;cursor:pointer}
+.tab.active{background:rgba(255,0,255,0.15);border-color:#ff00ff;color:#ff00ff;box-shadow:0 0 10px rgba(255,0,255,0.2)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.card{background:rgba(10,5,30,0.88);border:1px solid #ff00ff;border-radius:8px;padding:12px 14px;margin-bottom:12px;box-shadow:0 0 8px rgba(255,0,255,0.12)}
+.card h2{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#ff00ff;margin-bottom:8px;font-weight:700}
+.prio-row{display:flex;align-items:flex-start;padding:6px 0;border-bottom:1px solid rgba(255,0,255,0.1);font-size:13px;line-height:1.3;gap:8px}
+.prio-row:last-child{border-bottom:none}
+.prio-chk{width:20px;height:20px;border:2px solid #ff00ff;border-radius:4px;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-top:1px;background:transparent;font-size:12px;color:#00ffcc}
+.prio-chk.checked{background:rgba(0,255,204,0.15);border-color:#00ffcc}
+.prio-chk.checked:after{content:"\2713";font-weight:bold}
+.prio-text{flex:1}
+.prio-text.done{text-decoration:line-through;opacity:0.5}
+.wday{background:rgba(0,0,0,0.3);border-radius:6px;padding:6px 4px;margin-bottom:4px;border:1px solid rgba(255,0,255,0.1)}
+.wday-today{border-color:#ff00ff;background:rgba(255,0,255,0.06)}
+.wday-head{font-size:10px;font-weight:700;color:#0066ff;text-transform:uppercase;text-align:center;margin-bottom:4px}
+.wdate{display:block;font-size:16px;font-weight:900;color:#ffcc00}
+.wday-today .wday-head{color:#ff00ff}
+.wevent{font-size:11px;padding:2px 0;border-bottom:1px solid rgba(255,0,255,0.08)}
+.wevent:last-child{border-bottom:none}
+.wtime{font-weight:700;color:#00ffff;font-size:10px;display:block}
+.all-day-tag{font-weight:700;color:#8b5cf6;font-size:9px;text-transform:uppercase;letter-spacing:0.5px;background:rgba(255,0,255,0.08);padding:1px 4px;border-radius:2px}
+.gantt{overflow-x:auto}
+.g-bar{display:flex;align-items:center;margin:4px 0;padding:4px 0;font-size:11px}
+.g-label{width:120px;flex-shrink:0;color:#e2e8f0;font-weight:600}
+.g-track{flex:1;height:18px;background:rgba(0,0,0,0.3);border-radius:3px;position:relative;overflow:hidden}
+.g-fill{height:100%;border-radius:3px;min-width:4px;position:absolute;left:0;top:0}
+.g-fill.open{background:linear-gradient(90deg,#ff00ff,#f59e0b)}
+.g-fill.active{background:linear-gradient(90deg,#f59e0b,#00ffcc)}
+.g-fill.done{background:#22c55e}
+.g-fill.assess{background:#3b82f6}
+.btn{background:rgba(255,0,255,0.12);border:1px solid #ff00ff;border-radius:8px;padding:10px;text-align:center;font-size:13px;color:#00ffcc;font-weight:600;margin-top:8px;cursor:pointer}
+.btn:hover{background:rgba(255,0,255,0.2)}
+input,textarea{width:100%;padding:8px;margin:4px 0 8px;background:#1e293b;border:1px solid #475569;border-radius:6px;color:#e2e8f0;font-size:13px}
+.footer{color:#64748b;font-size:11px;text-align:center;margin-top:16px}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="weekday" id="weekday"></div>
+    <div class="date-big" id="datebig"></div>
+  </div>
+  <img class="logo" src="https://shcomposites.com/wp-content/uploads/superior-huntingdon-composites-265.jpg" alt="SC">
+</div>
+
+<div class="tab-bar">
+  <div class="tab active" onclick="swichTab('day')">MY DAY</div>
+  <div class="tab" onclick="swichTab('week')">WEEK</div>
+  <div class="tab" onclick="swichTab('gantt')">GANTT</div>
+</div>
+
+<!-- TAB 1: MY DAY -->
+<div id="tab-day" class="tab-content active">
+  <div class="card">
+    <h2>TOAY'S CHECLIST</h2>
+    <div id="priorities-list"></div>
+  </div>
+  <div class="card">
+    <h2>TOAY'S CALENDAR</h2>
+    <div id="todays-meetings"></div>
+  </div>
+  <div class="card">
+    <h2>QUIC-ADD</h2>
+    <input type="text" id="quick-task" placeholder="e.g. Call vendor about blasting...">
+    <button class="btn" onclick="addTask()">+ Add to Priorities</button>
+  </div>
+</div>
+
+<!-- TAB 2: WEEK -->
+<div id="tab-week" class="tab-content">
+  <div class="card">
+    <h2>THIS WEE</h2>
+    <div id="week-calendar"></div>
+  </div>
+</div>
+
+<!-- TAB 3: GANTT -->
+<div id="tab-gantt" class="tab-content">
+  <div class="card">
+    <h2>EHS PROJECS TIMELINE</h2>
+    <div class="gantt" id="gantt-chart"></div>
+  </div>
+</div>
+
+<div class="footer">Built Nov 02, 12:00 AM ET · Tap checkbox to mark done</div>
+
+<script>
+// ===== DATA =====
+const proiorities = [
+  "Shrink wrap machine safety zone — rails/tape/barrier (before John returns)",
+  "Furnace walkway fall protection — dig in personally",
+  "Chain railings & swing gates — follow up with Bryan",
+  "Dry ice blasting — schedule vendor site visit",
+  "Survey to Greg — get green light on anonymous employee survey",
+  "Insurance claim — redo/open enrollment (reminder daily)",
+  "Safety Walkthrough — get organized with Greg (Thurs 10:30am)"
+];
+
+// Load checked state from localStorage
+function loadChecked() {
+  try { return JSON.parse(localStorage.getItem('ehsChecked')||'[]'); }
+  catch(e){ return []; }
+}
+function saveChecked(arr) {
+  localStorage.setItem('ehsChecked', JSON.stringify(arr));
+}
+
+function rendePriorities() {
+  const list = document.getElementById('priorities-list');
+  const checked = loadChecked();
+  list.innerHTML = '';
+  priorities.forEach((p,i) => {
+    const done = checked.includes(i);
+    const row = document.createElement('div');
+    row.className = 'prio-row';
+    row.innerHTML = '<div class="prio-chk' + (done?' checked':'') + '" data-idx="' + i + '" onclick="oggleCheck(this)"></div><div class="prio-text' + (done?' done':'') + '">' + p + '</div>';
+    list.appendChild(row);
+  });
+}
+
+function toggleCheck(el) {
+  const idx = parseInt(el.dataset.idx);
+  let checked = loadChecked();
+  if (checked.includes(idx)) {
+    checked = checked.filter(i => i !== idx);
+  } else {
+    checked.push(idx);
+  }
+  saveChecked(checked);
+  renderPriorities();
+}
+
+function addTask() {
+  const inp = document.getElementById('quick-task');
+  const t = inp.value.trim();
+  if (!t) return;
+  priorities.unshift(t);
+  renderPriorities();
+  inp.value = '';
+}
+
+// ===== CALENDAR DATA =====
+// This loads from the server at build time - meetings are embedded here
+const meetings = JSON.parse([{"date": "2026-10-28", "time": "12:00 PM", "title": "Chili Cookout", "loc": "Break Room"}, {"date": "2026-10-28", "time": "9:00 AM", "title": "SCC Production Call (Teams)", "loc": "Teams"}, {"date": "2026-10-29", "time": "10:30 AM", "title": "Safety Walkthrough"}, {"date": "2026-10-29", "time": "All Day", "title": "Board of Directors Site Visit"}, {"date": "2026-10-30", "time": "1:00 PM", "title": "Weekly Planning Meeting", "loc": "Conf Room"}, {"date": "2026-10-30", "time": "1:30 PM", "title": "Monthly Maintenance Meeting", "loc": "Conf Room"}, {"date": "2026-10-30", "time": "2:30 PM", "title": "Projects Meeting", "loc": "Conf Room"}, {"date": "2026-10-31", "time": "", "title": "\ud83c\udf83 Trick or Treat \ud83c\udf83"}, {"date": "2026-11-02", "time": "10:00 AM", "title": "Teams \u2014 Logan Wright (KSS) New Hire Safety Partnership", "loc": "Teams"}, {"date": "2026-11-02", "time": "7:45 AM", "title": "New Hire Orientation \u2014 Conference Room", "loc": "Conf Room"}, {"date": "2026-11-02", "time": "3:30 PM", "title": "Teams \u2014 Express Temp Agency Meeting", "loc": "Teams"}, {"date": "2026-11-03", "time": "7:30 AM", "title": "Supervisors Meeting (Teams)", "loc": "Teams"}, {"date": "2026-11-03", "time": "2:30 PM", "title": "Succession Planning", "loc": "Conf Room"}, {"date": "2026-11-04", "time": "9:00 AM", "title": "SCC Production Call (Teams)", "loc": "Teams"}, {"date": "2026-11-04", "time": "5:00 PM", "title": "Carvana Delivery \ud83d\ude97"}, {"date": "2026-11-03", "time": "All Day", "title": "Send Chad Doordash \ud83c\udf81"}, {"date": "2026-11-05", "time": "10:30 AM", "title": "Safety Walkthrough", "loc": ""}, {"date": "2026-11-05", "time": "2:00 PM", "title": "Weekly Planning Meeting", "loc": "Conf Room"}]);
+const today = "2026-11-02";
+
+function renderTodaysMeetings() {
+  const div = document.getElementById('todays-meetings');
+  const todayEvents = meetings.filter(m => m.date === today).sort((a,b) => {
+    if (a.time === 'All Day' || !a.time) return -1;
+    if (b.time === 'All Day' || !b.time) return 1;
+    return a.time.localeCompare(b.time);
+  });
+  if (todayEvents.length === 0) {
+    div.innerHTML = '<div class="empty">No meetings today</div>';
+    return;
+  }
+  div.innerHTML = todayEvents.map(m => {
+    const timeHtml = m.time === 'All Day' || !m.time ? '<span class="all-day-tag">ALL DAY</span>' : '<span class="wtime">' + m.time + '</span>';
+    const loc = m.loc ? ' (' + m.loc + ')' : '';
+    return '<div class="wevent">' + timeHtml + ' ' + m.title + loc + '</div>';
+  }).join('');}
+
+function renderWeek() {
+  const div = document.getElementById('week-calendar');
+  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  let html = '';
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(today);
+    d.setDate(d.getDate() + i);
+    const iso = d.toISOString().splitt('T')[0];
+    const label = i === 0 ? 'Today' : days[d.getDay()];
+    const dayEvents = meetings.filter(m => m.date === iso).sort((a,b) => {
+      if (a.time === 'All Day' || !a.time) return -1;
+      if (b.time === 'All Day' || !b.time) return 1;
+      return a.time.localeCompare(b.time);
+    });
+    html += '<div class="wday' + (i===0?' wday-today':'') + '"><div class="wday-head">' + label + '<span class="wdate">' + d.getDate() + '</span></div>';
+    if (dayEvents.length === 0) {
+      html += '<div class="wevent" style="color:#64748b;font-size:10px">--</div>';
+    } else {
+      dayEvents.forEach(m => {
+        const t = m.time === 'All Day' || !m.time ? '<span class="all-day-tag">ALL DAY</span>' : '<span class="wtime">' + m.time + '</span>';
+        const l = m.loc ? ' (' + m.loc + ')' : '';
+        html += '<div class="wevent">' + t + ' ' + m.title + l + '</div>';
+      });
+    }
+    html += '</div>';
+  }
+  div.innerHTML = html;
+}
+
+function renderGantt() {
+  const div = document.getElementById('gantt-chart');
+  const projects = [
+    {id:'P-001',name:'Shrink wrap barrier',status:'open',start:0,dur:2},
+    {id:'P-002',name:'Dry ice blasting',status:'open',start:0,dur:4},
+    {id:'P-003',name:'KSS partnership',status:'active',start:0,dur:3},
+    {id:'P-004',name:'Training matrix',status:'open',start:0,dur:6},
+    {id:'P-005',name:'Vest program pilot',status:'open',start:1,dur:4},
+    {id:'P-006',name:'Anonymous survey',status:'open',start:1,dur:3},
+    {id:'P-007',name:'Corrective action system',status:'active',start:0,dur:2},
+    {id:'P-011',name:'Furnace railings/gates',status:'open',start:0,dur:3},
+    {id:'P-012',name:'Walkway fall protection',status:'open',start:0,dur:3},
+    {id:'P-009',name:'Saw + vacuum',status:'open',start:0,dur:3},
+    {id:'P-010',name:'Hydration stations',status:'open',start:0,dur:2},
+    {id:'P-008',name:'Huntingdon PA transition',status:'open',start:4,dur:6},
+  ];
+  div.innerHTML = projects.map(p => {
+    const leftPct = (p.start / 12) * 100;
+    const widthPct = (p.dur / 12) * 100;
+    return '<div class="g-bar"><div class="g-label">' + p.id + ' ' + p.name + '</div><div class="g-track"><div class="g-fill ' + p.status + '" style="left:' + leftPct + '%;width:' + widthPct + '%"></div></div></div>';
+  }).join('');
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelector('.tab[onclick*="' + tab + '"]').classList.add('active');
+  document.getElementById('tab-' + tab).classList.add('active');
+}
+
+// Init
+document.getElementById('weekday').textContent = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][new Date().getDay()];
+document.getElementById('datebig').textContent = new Date().toLocaleDateString('en-US',{month:'long',day:'numeric'});
+renderPriorities();
+renderTodayMeetings();
+renderWeek();
+renderGantt();
+</script>
+</body>
+</html>
