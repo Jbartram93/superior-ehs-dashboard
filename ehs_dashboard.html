@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Superior EHS — Dashboard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0}
+.sidebar{width:240px;background:#0b1120;min-height:100vh;position:fixed;top:0;left:0;z-index:50}
+.main{margin-left:240px;min-height:100vh}
+.nav-item{padding:10px 18px;display:flex;align-items:center;gap:12px;font-size:14px;font-weight:500;color:#94a3b8;transition:all 0.15s;border-radius:8px;margin:2px 8px;cursor:pointer}
+.nav-item:hover,.nav-item.active{background:rgba(59,130,246,0.1);color:#e2e8f0}
+.nav-item.active::before{content:"";position:absolute;left:0;width:3px;height:20px;background:#3b82f6;border-radius:0 3px 3px 0}
+.stat-card{background:linear-gradient(135deg,rgba(30,41,59,0.8),rgba(15,23,42,0.6));border:1px solid rgba(59,130,246,0.2);border-radius:12px;padding:16px 20px}
+.stat-value{font-size:26px;font-weight:800;color:#f8fafc}
+.stat-label{font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:1px;font-weight:600}
+.action-item{padding:8px 0;border-bottom:1px solid rgba(59,130,246,0.1);font-size:13px;line-height:1.35;display:flex;align-items:flex-start;gap:8px}
+.chart-area{background:rgba(30,41,59,0.4);border-radius:8px;height:150px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(59,130,246,0.15)}
+@media(max-width:768px){.sidebar{display:none}.main{margin-left:0}}
+.mobile-bar{display:none}@media(max-width:768px){.mobile-bar{display:flex;background:#0b1120;padding:12px 16px;border-bottom:1px solid rgba(59,130,246,0.2);gap:8px;align-items:center;position:sticky;top:0;z-index:40} .mobile-bar button{padding:8px;border-radius:6px;background:rgba(59,130,246,0.1);font-size:18px;color:#e2e8f0;border:none;cursor:pointer}}
+</style>
+</head>
+<body>
+
+<!-- Mobile top bar -->
+<div class="mobile-bar" id="mb">
+  <button onclick="togM()">☰</button>
+  <div style="font-weight:700;font-size:14px;color:#3b82f6">SUPERIOR EHS</div>
+  <div style="flex:1"></div>
+  <div style="width:28px;height:28px;border-radius:50%;background:#3b82f6;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff">JB</div>
+</div>
+
+<!-- Sidebar -->
+<div class="sidebar" id="side">
+  <div style="padding:20px 18px;border-bottom:1px solid rgba(59,130,246,0.15)">
+    <div style="font-size:16px;font-weight:800;color:#3b82f6;letter-spacing:-0.5px">SUPERIOR</div>
+    <div style="font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:2px;margin-top:2px">EHS DASHBOARD</div>
+  </div>
+  <nav style="padding:12px 0;margin-top:8px">
+    <div class="nav-item active">📊 Dashboard</div>
+    <div class="nav-item">📋 Incidents</div>
+    <div class="nav-item">📁 Projects</div>
+    <div class="nav-item">✅ Corrective Actions</div>
+    <div class="nav-item">📅 Calendar</div>
+    <div class="nav-item">📈 Analytics</div>
+    <div class="nav-item">🛠 Safety Tools</div>
+    <div class="nav-item" style="margin-top:24px">⚙️ Settings</div>
+  </nav>
+  <div style="position:absolute;bottom:0;left:0;right:0;padding:16px 18px;border-top:1px solid rgba(59,130,246,0.1);display:flex;align-items:center;gap:10px">
+    <div style="width:32px;height:32px;border-radius:50%;background:#3b82f6;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff">JB</div>
+    <div><div style="font-size:12px;font-weight:600">Justin Bartram</div><div style="font-size:10px;color:#64748b">EHS Manager</div></div>
+  </div>
+</div>
+
+<!-- Main content -->
+<div class="main" id="main">
+  <div style="padding:20px 28px">
+
+    <!-- Header row -->
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;flex-wrap:wrap;gap:8px">
+      <div>
+        <div style="font-size:22px;font-weight:700;color:#f8fafc">Good morning, Justin</div>
+        <div style="font-size:13px;color:#64748b;margin-top:2px">Friday, November 06 · Superior Huntingdon Composites · Vanceburg + Huntingdon PA</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span style="font-size:12px;color:#64748b">Last synced: Nov 06, 12:00 AM</span>
+        <span style="width:6px;height:6px;border-radius:50%;background:#22c55e;display:inline-block"></span>
+      </div>
+    </div>
+
+    <!-- Stat cards -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div class="stat-card">
+        <div class="stat-label">Open Corrective Actions</div>
+        <div class="stat-value">12</div>
+        <div style="font-size:11px;color:#f59e0b;margin-top:4px">2 overdue</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Active Projects</div>
+        <div class="stat-value">14</div>
+        <div style="font-size:11px;color:#22c55e;margin-top:4px">10 in progress</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">2026 Incidents</div>
+        <div class="stat-value">25</div>
+        <div style="font-size:11px;color:#64748b;margin-top:4px">4 recordable · 2 lost time</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Days Since LTI</div>
+        <div class="stat-value">37</div>
+        <div style="font-size:11px;color:#22c55e;margin-top:4px">Last: Oct 28 (Gordon Ruggles)</div>
+      </div>
+    </div>
+
+    <!-- Main grid: Projects + Activity -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+      <!-- Projects (NOW/NEXT/LATER) - spans 2 cols -->
+      <div class="lg:col-span-2" style="background:rgba(30,41,59,0.5);border:1px solid rgba(59,130,246,0.2);border-radius:12px;padding:16px 20px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+          <h2 style="font-size:13px;font-weight:700;color:#f8fafc;text-transform:uppercase;letter-spacing:1px">ACTIVE PROJECTS</h2>
+          <span style="font-size:11px;color:#3b82f6;cursor:pointer">View all →</span>
+        </div>
+        <div class="space-y-2">
+          <div style="margin-bottom:8px"><span style="font-size:10px;font-weight:700;color:#ef4444;text-transform:uppercase">NOW — This Week</span></div>
+          <div class="action-item"><span style="font-size:10px;margin-top:2px">🔴</span><span>Find air sampling for furnace builder (RCF) IES call Fri 1pm</span></div><div class="action-item"><span style="font-size:10px;margin-top:2px">🔴</span><span>Shrink wrap barrier — awaiting delivery + install</span></div><div class="action-item"><span style="font-size:10px;margin-top:2px">🔴</span><span>Get vest pricing for Greg</span></div><div class="action-item"><span style="font-size:10px;margin-top:2px">🔴</span><span>Email CEO Jason</span></div><div class="action-item"><span style="font-size:10px;margin-top:2px">🔴</span><span>Rotator log rollout w/ supervisors — Gordon Ruggles follow-up</span></div>
+        </div>
+        <div style="margin:10px 0">
+          <span style="font-size:10px;font-weight:700;color:#f59e0b;text-transform:uppercase">NEXT — This Month</span>
+          <div class="action-item"><span style="font-size:10px;margin-top:2px">🟡</span><span>Soham — heater enclosure in wash pit</span></div><div class="action-item"><span style="font-size:10px;margin-top:2px">🟡</span><span>Furnace walkway fall protection audit</span></div><div class="action-item"><span style="font-size:10px;margin-top:2px">🟡</span><span>Furnace PWI PPE revision review</span></div><div class="action-item"><span style="font-size:10px;margin-top:2px">🟡</span><span>Dry ice blasting trial scheduling</span></div><div class="action-item"><span style="font-size:10px;margin-top:2px">🟡</span><span>Vest program rollout to all shifts</span></div>
+        </div>
+        <div style="margin:10px 0">
+          <span style="font-size:10px;font-weight:700;color:#22c55e;text-transform:uppercase">LATER — This Quarter</span>
+          <div class="action-item"><span style="font-size:10px;margin-top:2px">🟢</span><span>Huntingdon PA transition — first visit Dec</span></div><div class="action-item"><span style="font-size:10px;margin-top:2px">🟢</span><span>Training matrix per role</span></div><div class="action-item"><span style="font-size:10px;margin-top:2px">🟢</span><span>Incident investigation worksheet rollout both sites</span></div><div class="action-item"><span style="font-size:10px;margin-top:2px">🟢</span><span>Custom incident tracking web app (Firebase)</span></div>
+        </div>
+      </div>
+
+      <!-- Recent activity -->
+      <div style="background:rgba(30,41,59,0.5);border:1px solid rgba(59,130,246,0.2);border-radius:12px;padding:16px 20px">
+        <h2 style="font-size:13px;font-weight:700;color:#f8fafc;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px">RECENT ACTIVITY</h2>
+        <div style="font-size:12px;color:#94a3b8;line-height:1.8">
+          <div style="display:flex;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid rgba(59,130,246,0.1)"><span style="width:6px;height:6px;border-radius:50%;background:#22c55e;flex-shrink:0"></span> Safety walk checklist built</div>
+          <div style="display:flex;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid rgba(59,130,246,0.1)"><span style="width:6px;height:6px;border-radius:50%;background:#3b82f6;flex-shrink:0"></span> IES air sampling meeting scheduled Fri 1pm</div>
+          <div style="display:flex;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid rgba(59,130,246,0.1)"><span style="width:6px;height:6px;border-radius:50%;background:#f59e0b;flex-shrink:0"></span> Vest pricing needed for Greg</div>
+          <div style="display:flex;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid rgba(59,130,246,0.1)"><span style="width:6px;height:6px;border-radius:50%;background:#22c55e;flex-shrink:0"></span> Tanaha email sent — safety walk partnership</div>
+          <div style="display:flex;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid rgba(59,130,246,0.1)"><span style="width:6px;height:6px;border-radius:50%;background:#3b82f6;flex-shrink:0"></span> Shrink wrap barrier ordered ✅</div>
+          <div style="display:flex;gap:8px;align-items:center;padding:6px 0"><span style="width:6px;height:6px;border-radius:50%;background:#22c55e;flex-shrink:0"></span> Weekly Planning moved to 10am Fri</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom row: Calendar + Corrective Actions -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div style="background:rgba(30,41,59,0.5);border:1px solid rgba(59,130,246,0.2);border-radius:12px;padding:16px 20px">
+        <h2 style="font-size:13px;font-weight:700;color:#f8fafc;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">TODAY'S SCHEDULE</h2>
+        <div style="font-size:13px;color:#94a3b8;line-height:1.6">
+          <div>🟢 8:00 AM — Email CEO Jason</div>
+          <div>🟢 10:00 AM — Weekly Planning Meeting (Conf Room)</div>
+          <div>🟢 10:30 AM — Safety Walkthrough w/ Tanaha</div>
+          <div>🟢 1:00 PM — IES Air Sampling (Teams)</div>
+        </div>
+      </div>
+      <div style="background:rgba(30,41,59,0.5);border:1px solid rgba(59,130,246,0.2);border-radius:12px;padding:16px 20px">
+        <h2 style="font-size:13px;font-weight:700;color:#f8fafc;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">QUICK TOOLS</h2>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px">
+          <div class="action-item" style="border-bottom:none;background:rgba(59,130,246,0.1);border-radius:6px;padding:8px">📋 Incident Report Form</div>
+          <div class="action-item" style="border-bottom:none;background:rgba(59,130,246,0.1);border-radius:6px;padding:8px">📝 5-Why Worksheet</div>
+          <div class="action-item" style="border-bottom:none;background:rgba(59,130,246,0.1);border-radius:6px;padding:8px">✅ Safety Walk Checklist</div>
+          <div class="action-item" style="border-bottom:none;background:rgba(59,130,246,0.1);border-radius:6px;padding:8px">📊 Corrective Action Tracker</div>
+          <div class="action-item" style="border-bottom:none;background:rgba(59,130,246,0.1);border-radius:6px;padding:8px">📁 Vests Until Verified Program</div>
+          <div class="action-item" style="border-bottom:none;background:rgba(59,130,246,0.1);border-radius:6px;padding:8px">🔗 EHS Foundation Repo</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:20px;font-size:11px;color:#475569;text-align:center;padding:12px 0;border-top:1px solid rgba(59,130,246,0.1)">
+      Superior EHS Dashboard · Built Nov 06, 12:00 AM ET · Vaneburg KY + Huntingdon PA
+    </div>
+  </div>
+</div>
+
+<script>
+function togM(){
+  var s=document.getElementById("side");
+  s.style.display=s.style.display==="block"?"none":"block";
+}
+</script>
+</body>
+</html>
