@@ -5,7 +5,17 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>Superior EHS — Dashboard</title>
-<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.tailwindcss.com">
+function goView(name){
+  var items=document.querySelectorAll('.nav-item');
+  items.forEach(function(i){i.classList.remove('active');});
+  event.currentTarget.classList.add('active');
+  var main=document.getElementById('main');
+  var msg='<div style="padding:20px 28px"><div style="font-size:22px;font-weight:700;color:#f8fafc">'+name+'</div><div style="font-size:13px;color:#64748b;margin-top:4px">This view will load live data from Firebase once wired. Currently showing the dashboard overview.</div><div style="background:rgba(30,41,59,0.5);border:1px solid rgba(59,130,246,0.2);border-radius:12px;padding:40px;margin-top:16px;text-align:center;color:#94a3b8;font-size:14px">'+name+' section coming soon — wired to live data after Firebase setup</div></div>';
+  if(name==='Dashboard'){ location.reload(); }
+  main.innerHTML=msg;
+}
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -91,8 +101,8 @@ body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0}
       </div>
       <div class="stat-card">
         <div class="stat-label">Days Since LTI</div>
-        <div class="stat-value">37</div>
-        <div style="font-size:11px;color:#22c55e;margin-top:4px">Last: Oct 28 (Gordon Ruggles)</div>
+        <div class="stat-value" id="lti-days" style="color:#f59e0b">?</div>
+        <div style="font-size:11px;color:#f59e0b;margin-top:4px">Verify last LTI date — Drake Duncan (Oct)</div>
       </div>
     </div>
 
@@ -106,7 +116,7 @@ body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0}
         </div>
         <div class="space-y-2">
           <div style="margin-bottom:8px"><span style="font-size:10px;font-weight:700;color:#ef4444;text-transform:uppercase">NOW — This Week</span></div>
-          <div class="action-item"><span style="font-size:10px;margin-top:2px">🔴</span><span>Find air sampling for furnace builder (RCF) IES call Fri 1pm</span></div><div class="action-item"><span style="font-size:10px;margin-top:2px">🔴</span><span>Shrink wrap barrier — awaiting delivery + install</span></div><div class="action-item"><span style="font-size:10px;margin-top:2px">🔴</span><span>Get vest pricing for Greg</span></div><div class="action-item"><span style="font-size:10px;margin-top:2px">🔴</span><span>Email CEO Jason</span></div><div class="action-item"><span style="font-size:10px;margin-top:2px">🔴</span><span>Rotator log rollout w/ supervisors — Gordon Ruggles follow-up</span></div>
+          <div class="action-item"><span style="font-size:10px;margin-top:2px">🔴</span><span>Find air sampling for furnace builder (RCF) IES call Fri 1pm</span></div><div class="action-item"><span style="font-size:10px;margin-top:2px">🟢</span><span>Shrink wrap barrier — purchased, awaiting install (Nov)</span></div><div class="action-item"><span style="font-size:10px;margin-top:2px">🔴</span><span>Get vest pricing for Greg</span></div><div class="action-item"><span style="font-size:10px;margin-top:2px">🔴</span><span>Email CEO Jason</span></div><div class="action-item"><span style="font-size:10px;margin-top:2px">🔴</span><span>Rotator log rollout w/ supervisors — Gordon Ruggles follow-up</span></div>
         </div>
         <div style="margin:10px 0">
           <span style="font-size:10px;font-weight:700;color:#f59e0b;text-transform:uppercase">NEXT — This Month</span>
