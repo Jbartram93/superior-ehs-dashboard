@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Superior EHS — Action Tracker</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0f172a;color:#e2e8f0;padding:12px;min-height:100vh}
+h1{font-size:17px;font-weight:700;color:#f8fafc;margin-bottom:4px}
+h2{font-size:11px;font-weight:700;color:#60a5fa;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid rgba(59,130,246,0.15);padding-bottom:3px;margin-bottom:6px}
+.sub{font-size:11px;color:#64748b;margin-bottom:8px}
+.top-bar{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;align-items:center}
+.btn{font-size:10px;padding:4px 10px;border-radius:4px;border:none;font-weight:600;cursor:pointer}
+.btn-primary{background:#3b82f6;color:#fff}
+.btn-ghost{background:rgba(59,130,246,0.1);color:#60a5fa}
+.btn-ghost.active{background:#3b82f6;color:#fff}
+.card{background:#1e293b;border:1px solid rgba(59,130,246,0.15);border-radius:8px;padding:10px 12px;margin-bottom:5px}
+.card:hover{border-color:#3b82f6}
+.cid{font-size:9px;color:#64748b;font-weight:700}
+.ct{font-size:12px;font-weight:600;color:#f8fafc;margin:2px 0}
+.cm{font-size:10px;color:#94a3b8}
+.cm b{color:#60a5fa}
+.cn{font-size:10px;color:#f59e0b;margin-top:2px;border-left:2px solid #f59e0b;padding-left:4px}
+.tag{font-size:8px;padding:1px 5px;border-radius:2px;font-weight:600;display:inline-block;margin-right:2px}
+.to{background:rgba(245,158,11,0.15);color:#f59e0b}
+.ta{background:rgba(59,130,246,0.15);color:#60a5fa}
+.td{background:rgba(34,197,94,0.15);color:#22c55e}
+.tx{background:rgba(139,92,246,0.15);color:#8b5cf6}
+.empty{padding:30px;text-align:center;color:#64748b;font-size:13px}
+.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:100}
+.modal-box{background:#1e293b;border:1px solid rgba(59,130,246,0.3);border-radius:10px;padding:16px;width:90%;max-width:480px;max-height:80vh;overflow-y:auto}
+label{font-size:10px;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-top:6px}
+input,textarea,select{width:100%;padding:6px;margin:2px 0 4px;background:#0f172a;border:1px solid #475569;border-radius:4px;color:#e2e8f0;font-size:12px}
+textarea{min-height:50px}
+.photo-thumb{width:60px;height:60px;border-radius:4px;border:1px solid #475569;margin:2px;display:inline-block;background-size:cover;background-position:center;cursor:pointer;vertical-align:top}
+.ft{font-size:9px;color:#475569;text-align:center;margin-top:10px;padding-top:6px;border-top:1px solid rgba(59,130,246,0.1)}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div style="flex:1"><h1>Corrective Action Tracker</h1><div class="sub" id="subtitle">Loading...</div></div>
+  <button class="btn btn-ghost" onclick="setF('all')" id="f-all">All</button>
+  <button class="btn btn-ghost" onclick="setF('open')" id="f-open">Open</button>
+  <button class="btn btn-ghost" onclick="setF('mine')" id="f-mine">My Queue</button>
+  <button class="btn btn-primary" id="add-btn" style="display:none" onclick="showAdd()">+ Add</button>
+</div>
+
+<div id="list"><div class="empty">Loading...</div></div>
+<div class="ft" id="ft"></div>
+
+<!-- Modal -->
+<div id="modal" class="modal" style="display:none" onclick="if(event.target===this)hideModal()">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <h2 style="margin-bottom:6px" id="modal-title">New Action</h2>
+    <input type="hidden" id="edit-id">
+    <label>Description</label>
+    <textarea id="f-item" rows="2"></textarea>
+    <label>Owner</label>
+    <input id="f-owner">
+    <label>Due Date</label>
+    <input id="f-due" placeholder="e.g. 11/14">
+    <label>Status</label>
+    <select id="f-status">
+      <option>Open</option><option>In Progress</option><option>Waiting</option><option>Done</option>
+    </select>
+    <label>Visibility</label>
+    <select id="f-vis">
+      <option value="Management">Management (managers see this)</option>
+      <option value="Private">Private (only you + EHS)</option>
+    </select>
+    <label>Notes (seen by managers on detail)</label>
+    <textarea id="f-notes" placeholder="e.g. Paint walkway complete, awaiting supervisor sign-off..."></textarea>
+    <label>Photo link (optional)</label>
+    <input id="f-photo" placeholder="https://...">
+    <div style="display:flex;gap:6px;margin-top:8px">
+      <button class="btn btn-primary" onclick="save()" style="flex:1">Save</button>
+      <button class="btn btn-ghost" onclick="hideModal()" style="flex:1">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var DB = "https://superior-ehs-default-rtdb.firebaseio.com";
+var all = [];
+var filter = "all";
+var isAdmin = window.location.search.indexOf("admin") !== -1;
+
+function xhr(path, cb, method, data) {
+  method = method || "GET";
+  var x = new XMLHttpRequest();
+  x.open(method, DB + path + ".json", true);
+  x.setRequestHeader("Content-Type","application/json");
+  x.onload = function() {
+    if (x.status >= 200 && x.status < 400) {
+      try { cb(JSON.parse(x.responseText)); }
+      catch(e) { cb(null); }
+    } else { cb(null); }
+  };
+  x.onerror = function() { cb(null); };
+  if (data) x.send(JSON.stringify(data));
+  else x.send();
+}
+
+function load() {
+  document.getElementById("subtitle").textContent = "Loading from cloud...";
+  xhr("/corrective_actions", function(data) {
+    all = data ? Object.keys(data).map(function(k) { return data[k]; }) : [];
+    render();
+    if (isAdmin) document.getElementById("add-btn").style.display = "inline-block";
+  });
+}
+
+function render() {
+  var items = all;
+  var filtered = [];
+  for (var i = 0; i < items.length; i++) {
+    var a = items[i];
+    if (a.visibility === "Private" && !isAdmin) continue;
+    if (filter === "open" && a.status === "Done") continue;
+    if (filter === "mine" && isAdmin) continue;
+    if (filter === "mine" && !isAdmin && (!a.owner || a.owner.toLowerCase().indexOf("justin") !== -1)) continue;
+    filtered.push(a);
+  }
+
+  var subtitle = filtered.length + " of " + all.length + " actions";
+  if (isAdmin) subtitle += " | Admin mode";
+  else subtitle += " | Manager view";
+  document.getElementById("subtitle").textContent = subtitle;
+
+  var div = document.getElementById("list");
+  if (filtered.length === 0) {
+    div.innerHTML = '<div class="empty">No actions found.</div>';
+    updateFooter();
+    return;
+  }
+
+  var html = "";
+  for (var i = 0; i < filtered.length; i++) {
+    var a = filtered[i];
+    var cls = "";
+    var tag = "";
+    if (a.status === "Open" || a.status === "Investigation") tag = '<span class="tag to">' + (a.status||"Open") + '</span>';
+    else if (a.status === "In Progress") tag = '<span class="tag ta">Active</span>';
+    else if (a.status === "Waiting") tag = '<span class="tag tx">Waiting</span>';
+    else if (a.status === "Done") { tag = '<span class="tag td">Done</span>'; cls = " style="opacity:0.6""; }
+    var due = a.due && a.due !== "N/A" ? ' <span style="color:'+(a.status!=="Done"?"#f59e0b":"#64748b")+'">Due ' + a.due + '</span>' : "";
+    var owner = a.owner ? ' <b>' + a.owner + '</b>' : "";
+    var notes = a.notes ? '<div class="cn">' + a.notes + '</div>' : "";
+    var photo = a.photo ? '<div style="margin-top:3px"><a href="' + a.photo + '" target="_blank" style="color:#3b82f6;font-size:10px">View photo</a></div>' : "";
+    var editBtn = isAdmin ? '<div style="margin-top:3px"><button class="btn btn-ghost" onclick="editAction('' + a.id + '')" style="font-size:9px;padding:2px 6px">Edit</button></div>' : "";
+    html += '<div class="card"' + cls + '><div style="display:flex;gap:3px;flex-wrap:wrap">' + tag + '<span class="cid">' + (a.id||"") + '</span></div><div class="ct">' + (a.item||"") + '</div><div class="cm">' + owner + due + '</div>' + notes + photo + editBtn + '</div>';
+  }
+
+  if (isAdmin) {
+    html += '<div style="margin-top:8px;text-align:center"><button class="btn btn-primary" onclick="showAdd()" style="padding:6px 20px;font-size:12px">+ Add New Corrective Action</button></div>';
+  }
+
+  div.innerHTML = html;
+  updateFooter();
+}
+
+function updateFooter() {
+  document.getElementById("ft").textContent = "Superior Huntingdon Composites | Last loaded " + new Date().toLocaleString();
+}
+
+function setF(f) {
+  filter = f;
+  document.querySelectorAll(".top-bar .btn-ghost").forEach(function(b) { b.classList.remove("active"); });
+  var el = document.getElementById("f-" + f);
+  if (el) el.classList.add("active");
+  render();
+}
+
+function showAdd() {
+  document.getElementById("modal-title").textContent = "New Corrective Action";
+  document.getElementById("edit-id").value = "";
+  ["f-item","f-owner","f-due","f-notes","f-photo"].forEach(function(id) { document.getElementById(id).value = ""; });
+  document.getElementById("f-status").value = "Open";
+  document.getElementById("f-vis").value = "Management";
+  document.getElementById("modal").style.display = "flex";
+}
+
+function hideModal() { document.getElementById("modal").style.display = "none"; }
+
+function save() {
+  var id = document.getElementById("edit-id").value;
+  if (!id) {
+    var num = all.length + 1;
+    id = "CA-" + (num < 10 ? "00" : num < 100 ? "0" : "") + num;
+  }
+  var item = document.getElementById("f-item").value.trim();
+  if (!item) { alert("Enter a description"); return; }
+  var obj = {
+    id: id,
+    item: item,
+    owner: document.getElementById("f-owner").value.trim() || "Justin",
+    due: document.getElementById("f-due").value.trim() || "N/A",
+    status: document.getElementById("f-status").value,
+    visibility: document.getElementById("f-vis").value,
+    notes: document.getElementById("f-notes").value.trim() || "",
+    photo: document.getElementById("f-photo").value.trim() || ""
+  };
+  xhr("/corrective_actions/" + id, function(r) {
+    hideModal();
+    load();
+  }, "PUT", obj);
+}
+
+function editAction(id) {
+  for (var i = 0; i < all.length; i++) {
+    if (all[i].id === id) {
+      var a = all[i];
+      document.getElementById("modal-title").textContent = "Edit " + id;
+      document.getElementById("edit-id").value = id;
+      document.getElementById("f-item").value = a.item || "";
+      document.getElementById("f-owner").value = a.owner || "";
+      document.getElementById("f-due").value = a.due || "";
+      document.getElementById("f-status").value = a.status || "Open";
+      document.getElementById("f-vis").value = a.visibility || "Management";
+      document.getElementById("f-notes").value = a.notes || "";
+      document.getElementById("f-photo").value = a.photo || "";
+      document.getElementById("modal").style.display = "flex";
+      break;
+    }
+  }
+}
+
+// Click on action to expand notes for managers
+// (already shows notes inline)
+
+// Init
+load();
+</script>
+</body>
+</html>
