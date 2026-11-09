@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Superior EHS — Live</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0}
+.sidebar{width:220px;background:#0b1120;min-height:100vh;position:fixed;top:0;left:0;z-index:50}
+.main{margin-left:220px;min-height:100vh;padding:20px 24px}
+.nav-item{padding:8px 14px;display:flex;align-items:center;gap:10px;font-size:13px;font-weight:500;color:#94a3b8;border-radius:6px;margin:1px 6px;cursor:pointer}
+.nav-item:hover,.nav-item.active{background:rgba(59,130,246,0.1);color:#e2e8f0}
+.stat-card{background:linear-gradient(135deg,rgba(30,41,59,0.8),rgba(15,23,42,0.6));border:1px solid rgba(59,130,246,0.2);border-radius:10px;padding:14px 18px}
+.stat-value{font-size:24px;font-weight:800;color:#f8fafc}
+.stat-label{font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:1px;font-weight:600}
+.action-item{padding:6px 0;border-bottom:1px solid rgba(59,130,246,0.1);font-size:12px;line-height:1.3;display:flex;align-items:flex-start;gap:6px}
+@media(max-width:768px){.sidebar{display:none} .main{margin-left:0}}
+.mobile-bar{display:none}@media(max-width:768px){.mobile-bar{display:flex;background:#0b1120;padding:10px 14px;border-bottom:1px solid rgba(59,130,246,0.2);gap:8px;align-items:center;position:sticky;top:0;z-index:40} .mobile-bar button{padding:6px;border-radius:4px;background:rgba(59,130,246,0.1);font-size:16px;color:#fff;border:none;cursor:pointer}}
+</style>
+</head>
+<body>
+
+<div class="mobile-bar">
+  <button onclick="togS()">☰</button>
+  <div style="font-weight:700;font-size:13px;color:#3b82f6">SUPERIOR EHS</div>
+  <div style="flex:1"></div>
+  <div style="width:26px;height:26px;border-radius:50%;background:#3b82f6;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff">JB</div>
+</div>
+
+<div class="sidebar">
+  <div style="padding:16px 14px;border-bottom:1px solid rgba(59,130,246,0.15)">
+    <div style="font-size:14px;font-weight:800;color:#3b82f6">SUPERIOR</div>
+    <div style="font-size:9px;color:#64748b;letter-spacing:2px">EHS LIVE</div>
+  </div>
+  <nav style="padding:8px 0">
+    <div class="nav-item active" onclick="showView('dashboard')">📊 Dashboard</div>
+    <div class="nav-item" onclick="showView('actions')">✅ Actions</div>
+    <div class="nav-item" onclick="showView('projects')">📁 Projects</div>
+    <div class="nav-item" onclick="showView('incidents')">📋 Incidents</div>
+    <div class="nav-item" onclick="showView('tools')">🛠 Tools</div>
+  </nav>
+  <div style="position:absolute;bottom:0;left:0;right:0;padding:12px 14px;border-top:1px solid rgba(59,130,246,0.1)">
+    <div style="font-size:11px;color:#475569">Justin Bartram · EHS Leader</div>
+  </div>
+</div>
+
+<div class="main" id="main">
+  <div id="v-dashboard" class="view">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;flex-wrap:wrap;gap:6px">
+      <div>
+        <div style="font-size:20px;font-weight:700;color:#f8fafc" id="greeting">Loading...</div>
+        <div style="font-size:12px;color:#64748b;margin-top:2px" id="today-date"></div>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center;font-size:11px;color:#475569">
+        <span id="db-status">connecting...</span>
+        <span id="sync-dot" style="width:6px;height:6px;border-radius:50%;background:#f59e0b;display:inline-block"></span>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5" id="stat-cards">
+      <div class="stat-card"><div class="stat-label">Open Actions</div><div class="stat-value" id="stat-open">--</div></div>
+      <div class="stat-card"><div class="stat-label">Active Projects</div><div class="stat-value" id="stat-projects">14</div></div>
+      <div class="stat-card"><div class="stat-label">2026 Incidents</div><div class="stat-value" id="stat-incidents">25</div></div>
+      <div class="stat-card"><div class="stat-label">Days Since LTI</div><div class="stat-value" id="stat-lti">12</div></div>
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div style="background:rgba(30,41,59,0.5);border:1px solid rgba(59,130,246,0.2);border-radius:10px;padding:14px 16px">
+        <div style="font-size:12px;font-weight:700;color:#f8fafc;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">OPEN ACTIONS</div>
+        <div id="action-list"><div style="color:#64748b;font-size:13px">Loading from Firebase...</div></div>
+      </div>
+      <div style="background:rgba(30,41,59,0.5);border:1px solid rgba(59,130,246,0.2);border-radius:10px;padding:14px 16px">
+        <div style="font-size:12px;font-weight:700;color:#f8fafc;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">RECENT</div>
+        <div id="activity-feed" style="font-size:12px;color:#94a3b8;line-height:1.7"><div style="color:#64748b;font-size:13px">Loading...</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="v-actions" class="view" style="display:none">
+    <div style="font-size:18px;font-weight:700;color:#f8fafc;margin-bottom:12px">Corrective Actions</div>
+    <div id="actions-full" style="background:rgba(30,41,59,0.5);border:1px solid rgba(59,130,246,0.2);border-radius:10px;padding:20px"><div style="color:#64748b;font-size:13px">Loading...</div></div>
+  </div>
+
+  <div id="v-projects" class="view" style="display:none">
+    <div style="font-size:18px;font-weight:700;color:#f8fafc;margin-bottom:12px">Projects</div>
+    <div id="projects-full" style="background:rgba(30,41,59,0.5);border:1px solid rgba(59,130,246,0.2);border-radius:10px;padding:20px"><div style="color:#64748b;font-size:13px">Loading...</div></div>
+  </div>
+
+  <div id="v-incidents" class="view" style="display:none">
+    <div style="font-size:18px;font-weight:700;color:#f8fafc;margin-bottom:12px">Incidents</div>
+    <div id="incidents-full" style="background:rgba(30,41,59,0.5);border:1px solid rgba(59,130,246,0.2);border-radius:10px;padding:20px"><div style="color:#64748b;font-size:13px">Loading...</div></div>
+  </div>
+
+  <div id="v-tools" class="view" style="display:none">
+    <div style="font-size:18px;font-weight:700;color:#f8fafc;margin-bottom:12px">Safety Tools</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px">
+      <div style="background:rgba(59,130,246,0.1);border-radius:6px;padding:10px;cursor:pointer">📋 Incident Report Form</div>
+      <div style="background:rgba(59,130,246,0.1);border-radius:6px;padding:10px;cursor:pointer">📝 5-Why Worksheet</div>
+      <div style="background:rgba(59,130,246,0.1);border-radius:6px;padding:10px;cursor:pointer">✅ Safety Walk Checklist</div>
+      <div style="background:rgba(59,130,246,0.1);border-radius:6px;padding:10px;cursor:pointer">🔗 EHS Foundation Repo</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const DB = 'https://superior-ehs-default-rtdb.firebaseio.com';
+async function fb(p,m='GET',d=null){
+  const o={method:m,headers:{'Content-Type':'application/json'}};
+  if(d) o.body=JSON.stringify(d);
+  try{return await(await fetch(DB+p+'.json',o)).json();}catch(e){return null;}
+}
+
+function togS(){const s=document.querySelector('.sidebar');s.style.display=s.style.display==='block'?'none':'block';}
+function showView(n){document.querySelectorAll('.view').forEach(v=>v.style.display='none');document.getElementById('v-'+n).style.display='block';document.querySelectorAll('.nav-item').forEach(v=>v.classList.remove('active'));document.querySelector('.nav-item[onclick*="'+n+'"]').classList.add('active');}
+
+async function init(){
+  const h=new Date().getHours(); document.getElementById('greeting').textContent='Good '+(h<12?'morning':h<17?'afternoon':'evening')+', Justin';
+  document.getElementById('today-date').textContent=new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+  const dbOk=(await fb('/_ping'))!==null;
+  document.getElementById('db-status').textContent=dbOk?'Live':'Offline'; document.getElementById('sync-dot').style.background=dbOk?'#22c55e':'#ef4444';
+
+  // Seed data if empty
+  const acts=await fb('/corrective_actions');
+  if(!acts){
+    const seed=[
+      {id:'CA-001',item:'Paint walkway markings - QC shack pallet zone',owner:'Justin',due:'11/14',status:'Open'},
+      {id:'CA-002',item:'Mark fire extinguisher clearance zone (3ft)',owner:'Bryan',due:'11/14',status:'Open'},
+      {id:'CA-003',item:'Expander rotation log rollout with supervisors',owner:'Justin',due:'11/12',status:'Open'},
+      {id:'CA-004',item:'Vest pricing for Greg',owner:'Justin',due:'11/10',status:'Open'},
+      {id:'CA-005',item:'IES air sampling results review (RCF furnace)',owner:'IES/Justin',due:'11/20',status:'Waiting'},
+      {id:'CA-006',item:'Furnace walkway fall protection audit',owner:'Justin',due:'11/18',status:'Open'},
+      {id:'CA-007',item:'Gas heater options (Soham wash pit)',owner:'Soham',due:'11/16',status:'Open'},
+      {id:'CA-008',item:'Shrink wrap barrier install',owner:'Bryan',due:'11/20',status:'Open'},
+      {id:'CA-009',item:'Set up Line 1 meeting - Sean/Tom/Roger/Jodi',owner:'Justin',due:'11/13',status:'Open'},
+      {id:'CA-010',item:'Open container drink policy draft',owner:'Justin',due:'11/16',status:'Open'},
+    ];
+    for(const a of seed) await fb('/corrective_actions/'+a.id,'PUT',a);
+    document.getElementById('action-list').innerHTML=seed.filter(a=>a.status==='Open').map(a=>'<div class="action-item"><span style="font-size:8px;color:#ef4444">🔴</span><span><b>'+a.id+'</b> '+a.item+'<br><span style="font-size:11px;color:#64748b">'+a.owner+' - due '+a.due+'</span></span></div>').join('');
+    document.getElementById('stat-open').textContent=seed.filter(a=>a.status==='Open').length;
+  }else{
+    const o=Object.values(acts).filter(a=>a.status==='Open');
+    document.getElementById('action-list').innerHTML=o.slice(0,5).map(a=>'<div class="action-item"><span style="font-size:8px;color:#ef4444">🔴</span><span><b>'+a.id+'</b> '+a.item+'<br><span style="font-size:11px;color:#64748b">'+a.owner+' - due '+a.due+'</span></span></div>').join('');
+    document.getElementById('stat-open').textContent=o.length;
+    document.getElementById('actions-full').innerHTML=Object.values(acts).map(a=>'<div class="action-item" style="font-size:13px"><b>'+a.id+'</b> '+a.item+' - <span style="color:#64748b">'+a.owner+', due '+a.due+' ['+a.status+']</span></div>').join('');
+  }
+
+  // Recent
+  document.getElementById('activity-feed').innerHTML='Paint walkway markings added<br>Fire extinguisher zone flagged<br>CEO call - Jason confirmed title<br>Bonnie Swim incident logged<br>Gordon Ruggles rotation log'.split('<br>').map(r=>'<div style="padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.05)">'+r+'</div>').join('');
+
+  // Projects
+  const projs=[
+    {id:'P-001',name:'Shrink wrap barrier',s:'Open'},{id:'P-002',name:'Dry ice blasting trial',s:'Open'},{id:'P-003',name:'Rotator log rollout',s:'Active'},
+    {id:'P-004',name:'CA training for supervisors',s:'Open'},{id:'P-005',name:'Furnace fall protection',s:'Open'},{id:'P-006',name:'Gas heater (Soham)',s:'Open'},
+    {id:'P-007',name:'Line 1 meeting setup',s:'Open'},{id:'P-008',name:'Huntingdon transition',s:'Plan'},{id:'P-009',name:'Training matrix',s:'Open'},
+  ];
+  document.getElementById('projects-full').innerHTML=projs.map(p=>'<div class="action-item" style="font-size:13px"><span style="font-size:9px">'+{'Active':'🟡','Open':'🔴','Plan':'🟢'}[p.s]+'</span> <b>'+p.id+'</b> '+p.name+' <span style="color:#64748b">['+p.s+']</span></div>').join('');
+
+  // Incidents
+  const incs=[
+    {id:'BONNIE',date:'11-7',e:'Bonnie Swim',t:'Recordable',d:'Tripped on pallet, groin injury/hospital',s:'Investigation'},
+    {id:'RUGGLES',date:'10-28',e:'Gordon Ruggles',t:'Near Miss',d:'Repetitive strain, left wrist/hand',s:'Closed'},
+  ];
+  document.getElementById('incidents-full').innerHTML=incs.map(i=>'<div class="action-item" style="font-size:13px"><b>'+i.id+'</b> ['+i.t+'] '+i.e+' - '+i.d+' - <span style="color:#64748b">'+i.s+'</span></div>').join('');
+}
+
+init();
+</script></body></html>
