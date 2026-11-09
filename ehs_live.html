@@ -4,102 +4,73 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Superior EHS — Live</title>
+<title>Superior EHS — Corrective Actions</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0}
-.sidebar{width:220px;background:#0b1120;min-height:100vh;position:fixed;top:0;left:0;z-index:50}
-.main{margin-left:220px;min-height:100vh;padding:20px 24px}
-.nav-item{padding:8px 14px;display:flex;align-items:center;gap:10px;font-size:13px;font-weight:500;color:#94a3b8;border-radius:6px;margin:1px 6px;cursor:pointer}
-.nav-item:hover,.nav-item.active{background:rgba(59,130,246,0.1);color:#e2e8f0}
-.stat-card{background:linear-gradient(135deg,rgba(30,41,59,0.8),rgba(15,23,42,0.6));border:1px solid rgba(59,130,246,0.2);border-radius:10px;padding:14px 18px}
-.stat-value{font-size:24px;font-weight:800;color:#f8fafc}
-.stat-label{font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:1px;font-weight:600}
-.action-item{padding:6px 0;border-bottom:1px solid rgba(59,130,246,0.1);font-size:12px;line-height:1.3;display:flex;align-items:flex-start;gap:6px}
-@media(max-width:768px){.sidebar{display:none} .main{margin-left:0}}
-.mobile-bar{display:none}@media(max-width:768px){.mobile-bar{display:flex;background:#0b1120;padding:10px 14px;border-bottom:1px solid rgba(59,130,246,0.2);gap:8px;align-items:center;position:sticky;top:0;z-index:40} .mobile-bar button{padding:6px;border-radius:4px;background:rgba(59,130,246,0.1);font-size:16px;color:#fff;border:none;cursor:pointer}}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0f172a;color:#e2e8f0;padding:16px}
+.nav-bar{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.nav-btn{padding:6px 12px;border-radius:6px;font-size:12px;font-weight:600;color:#94a3b8;cursor:pointer;border:none;background:transparent}
+.nav-btn.active{background:rgba(59,130,246,0.15);color:#60a5fa}
+.action-card{background:linear-gradient(135deg,rgba(30,41,59,0.8),rgba(15,23,42,0.6));border:1px solid rgba(59,130,246,0.2);border-radius:10px;padding:10px 14px;margin-bottom:8px;display:flex;gap:10px;align-items:flex-start}
+.action-card.overdue{border-left:3px solid #ef4444}
+.action-card.open{border-left:3px solid #f59e0b}
+.action-card.done{border-left:3px solid #22c55e}
+.action-id{font-size:10px;font-weight:700;color:#64748b;white-space:nowrap}
+.action-title{font-size:13px;font-weight:500;color:#f8fafc;line-height:1.3}
+.action-meta{font-size:11px;color:#64748b;margin-top:2px}
+.badge{font-size:9px;padding:1px 6px;border-radius:3px;font-weight:600;text-transform:uppercase}
+.badge-open{background:rgba(245,158,11,0.15);color:#f59e0b}
+.badge-active{background:rgba(59,130,246,0.15);color:#60a5fa}
+.badge-closed{background:rgba(34,197,94,0.15);color:#22c55e}
+.badge-private{background:rgba(239,68,68,0.15);color:#ef4444;margin-left:4px}
+.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:100}
+.modal-content{background:#1e293b;border:1px solid rgba(59,130,246,0.3);border-radius:12px;padding:20px;width:90%;max-width:500px}
+input,textarea,select{width:100%;padding:8px;margin:4px 0 8px;background:#0f172a;border:1px solid #475569;border-radius:6px;color:#e2e8f0;font-size:13px}
+label{font-size:11px;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-top:6px}
+h1{font-size:18px;font-weight:700}
 </style>
 </head>
 <body>
+<h1>✅ Corrective Actions</h1>
+<div style="font-size:12px;color:#64748b;margin-bottom:10px" id="subtitle"></div>
 
-<div class="mobile-bar">
-  <button onclick="togS()">☰</button>
-  <div style="font-weight:700;font-size:13px;color:#3b82f6">SUPERIOR EHS</div>
+<div class="nav-bar">
+  <button class="nav-btn active" onclick="setFilter('all')" id="f-all">All</button>
+  <button class="nav-btn" onclick="setFilter('open')" id="f-open">Open</button>
+  <button class="nav-btn" onclick="setFilter('mine')" id="f-mine">My Queue</button>
+  <button class="nav-btn" onclick="setFilter('overdue')" id="f-overdue">Overdue</button>
+  <button class="nav-btn" onclick="setFilter('management')" id="f-mgmt">Mgmt View</button>
   <div style="flex:1"></div>
-  <div style="width:26px;height:26px;border-radius:50%;background:#3b82f6;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff">JB</div>
+  <button class="nav-btn" style="color:#22c55e;font-weight:700" onclick="showAdd()">+ Add</button>
+  <button class="nav-btn" onclick="location.reload()">🔄</button>
 </div>
 
-<div class="sidebar">
-  <div style="padding:16px 14px;border-bottom:1px solid rgba(59,130,246,0.15)">
-    <div style="font-size:14px;font-weight:800;color:#3b82f6">SUPERIOR</div>
-    <div style="font-size:9px;color:#64748b;letter-spacing:2px">EHS LIVE</div>
-  </div>
-  <nav style="padding:8px 0">
-    <div class="nav-item active" onclick="showView('dashboard')">📊 Dashboard</div>
-    <div class="nav-item" onclick="showView('actions')">✅ Actions</div>
-    <div class="nav-item" onclick="showView('projects')">📁 Projects</div>
-    <div class="nav-item" onclick="showView('incidents')">📋 Incidents</div>
-    <div class="nav-item" onclick="showView('tools')">🛠 Tools</div>
-  </nav>
-  <div style="position:absolute;bottom:0;left:0;right:0;padding:12px 14px;border-top:1px solid rgba(59,130,246,0.1)">
-    <div style="font-size:11px;color:#475569">Justin Bartram · EHS Leader</div>
-  </div>
-</div>
+<div id="action-list"></div>
 
-<div class="main" id="main">
-  <div id="v-dashboard" class="view">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;flex-wrap:wrap;gap:6px">
-      <div>
-        <div style="font-size:20px;font-weight:700;color:#f8fafc" id="greeting">Loading...</div>
-        <div style="font-size:12px;color:#64748b;margin-top:2px" id="today-date"></div>
-      </div>
-      <div style="display:flex;gap:6px;align-items:center;font-size:11px;color:#475569">
-        <span id="db-status">connecting...</span>
-        <span id="sync-dot" style="width:6px;height:6px;border-radius:50%;background:#f59e0b;display:inline-block"></span>
-      </div>
-    </div>
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5" id="stat-cards">
-      <div class="stat-card"><div class="stat-label">Open Actions</div><div class="stat-value" id="stat-open">--</div></div>
-      <div class="stat-card"><div class="stat-label">Active Projects</div><div class="stat-value" id="stat-projects">14</div></div>
-      <div class="stat-card"><div class="stat-label">2026 Incidents</div><div class="stat-value" id="stat-incidents">25</div></div>
-      <div class="stat-card"><div class="stat-label">Days Since LTI</div><div class="stat-value" id="stat-lti">12</div></div>
-    </div>
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-      <div style="background:rgba(30,41,59,0.5);border:1px solid rgba(59,130,246,0.2);border-radius:10px;padding:14px 16px">
-        <div style="font-size:12px;font-weight:700;color:#f8fafc;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">OPEN ACTIONS</div>
-        <div id="action-list"><div style="color:#64748b;font-size:13px">Loading from Firebase...</div></div>
-      </div>
-      <div style="background:rgba(30,41,59,0.5);border:1px solid rgba(59,130,246,0.2);border-radius:10px;padding:14px 16px">
-        <div style="font-size:12px;font-weight:700;color:#f8fafc;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">RECENT</div>
-        <div id="activity-feed" style="font-size:12px;color:#94a3b8;line-height:1.7"><div style="color:#64748b;font-size:13px">Loading...</div></div>
-      </div>
-    </div>
-  </div>
-
-  <div id="v-actions" class="view" style="display:none">
-    <div style="font-size:18px;font-weight:700;color:#f8fafc;margin-bottom:12px">Corrective Actions</div>
-    <div id="actions-full" style="background:rgba(30,41,59,0.5);border:1px solid rgba(59,130,246,0.2);border-radius:10px;padding:20px"><div style="color:#64748b;font-size:13px">Loading...</div></div>
-  </div>
-
-  <div id="v-projects" class="view" style="display:none">
-    <div style="font-size:18px;font-weight:700;color:#f8fafc;margin-bottom:12px">Projects</div>
-    <div id="projects-full" style="background:rgba(30,41,59,0.5);border:1px solid rgba(59,130,246,0.2);border-radius:10px;padding:20px"><div style="color:#64748b;font-size:13px">Loading...</div></div>
-  </div>
-
-  <div id="v-incidents" class="view" style="display:none">
-    <div style="font-size:18px;font-weight:700;color:#f8fafc;margin-bottom:12px">Incidents</div>
-    <div id="incidents-full" style="background:rgba(30,41,59,0.5);border:1px solid rgba(59,130,246,0.2);border-radius:10px;padding:20px"><div style="color:#64748b;font-size:13px">Loading...</div></div>
-  </div>
-
-  <div id="v-tools" class="view" style="display:none">
-    <div style="font-size:18px;font-weight:700;color:#f8fafc;margin-bottom:12px">Safety Tools</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px">
-      <div style="background:rgba(59,130,246,0.1);border-radius:6px;padding:10px;cursor:pointer">📋 Incident Report Form</div>
-      <div style="background:rgba(59,130,246,0.1);border-radius:6px;padding:10px;cursor:pointer">📝 5-Why Worksheet</div>
-      <div style="background:rgba(59,130,246,0.1);border-radius:6px;padding:10px;cursor:pointer">✅ Safety Walk Checklist</div>
-      <div style="background:rgba(59,130,246,0.1);border-radius:6px;padding:10px;cursor:pointer">🔗 EHS Foundation Repo</div>
+<!-- Add modal -->
+<div id="modal" class="modal" style="display:none" onclick="if(event.target===this)hideAdd()">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <div style="font-size:16px;font-weight:700;margin-bottom:8px">New Corrective Action</div>
+    <label>Action Description</label>
+    <textarea id="ca-item" rows="2" placeholder="e.g. Paint walkway markings..."></textarea>
+    <label>Owner</label>
+    <input id="ca-owner" placeholder="e.g. Justin, Bryan, Matt..." onclick="quickOwner(this)">
+    <label>Due Date</label>
+    <input id="ca-due" placeholder="MM/DD" onclick="this.value='11/'+prompt('Day?')">
+    <label>Visibility</label>
+    <select id="ca-vis">
+      <option value="Private">Private (Justin + me)</option>
+      <option value="Management" selected>Management (managers + Greg)</option>
+      <option value="Executive"Executive (Greg + Jason + Tom)</option>
+    </select>
+    <label>Status</label>
+    <select id="ca-status">
+      <option>Open</option><option>In Progress</option><option>Waiting</option><option>Done</option>
+    </select>
+    <div style="display:flex;gap:6px;margin-top:10px">
+      <button onclick="saveAction()" style="flex:1;padding:8px;background:#3b82f6;border:none;border-radius:6px;color:#fff;font-weight:600;cursor:pointer">Save</button>
+      <button onclick="hideAdd()" style="flex:1;padding:8px;background:transparent;border:1px solid #475569;border-radius:6px;color:#94a3b8;cursor:pointer">Cancel</button>
     </div>
   </div>
 </div>
@@ -112,58 +83,92 @@ async function fb(p,m='GET',d=null){
   try{return await(await fetch(DB+p+'.json',o)).json();}catch(e){return null;}
 }
 
-function togS(){const s=document.querySelector('.sidebar');s.style.display=s.style.display==='block'?'none':'block';}
-function showView(n){document.querySelectorAll('.view').forEach(v=>v.style.display='none');document.getElementById('v-'+n).style.display='block';document.querySelectorAll('.nav-item').forEach(v=>v.classList.remove('active'));document.querySelector('.nav-item[onclick*="'+n+'"]').classList.add('active');}
+let actions = [];
+let filter = 'all';
 
-async function init(){
-  const h=new Date().getHours(); document.getElementById('greeting').textContent='Good '+(h<12?'morning':h<17?'afternoon':'evening')+', Justin';
-  document.getElementById('today-date').textContent=new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
-  const dbOk=(await fb('/_ping'))!==null;
-  document.getElementById('db-status').textContent=dbOk?'Live':'Offline'; document.getElementById('sync-dot').style.background=dbOk?'#22c55e':'#ef4444';
-
-  // Seed data if empty
-  const acts=await fb('/corrective_actions');
-  if(!acts){
-    const seed=[
-      {id:'CA-001',item:'Paint walkway markings - QC shack pallet zone',owner:'Justin',due:'11/14',status:'Open'},
-      {id:'CA-002',item:'Mark fire extinguisher clearance zone (3ft)',owner:'Bryan',due:'11/14',status:'Open'},
-      {id:'CA-003',item:'Expander rotation log rollout with supervisors',owner:'Justin',due:'11/12',status:'Open'},
-      {id:'CA-004',item:'Vest pricing for Greg',owner:'Justin',due:'11/10',status:'Open'},
-      {id:'CA-005',item:'IES air sampling results review (RCF furnace)',owner:'IES/Justin',due:'11/20',status:'Waiting'},
-      {id:'CA-006',item:'Furnace walkway fall protection audit',owner:'Justin',due:'11/18',status:'Open'},
-      {id:'CA-007',item:'Gas heater options (Soham wash pit)',owner:'Soham',due:'11/16',status:'Open'},
-      {id:'CA-008',item:'Shrink wrap barrier install',owner:'Bryan',due:'11/20',status:'Open'},
-      {id:'CA-009',item:'Set up Line 1 meeting - Sean/Tom/Roger/Jodi',owner:'Justin',due:'11/13',status:'Open'},
-      {id:'CA-010',item:'Open container drink policy draft',owner:'Justin',due:'11/16',status:'Open'},
-    ];
-    for(const a of seed) await fb('/corrective_actions/'+a.id,'PUT',a);
-    document.getElementById('action-list').innerHTML=seed.filter(a=>a.status==='Open').map(a=>'<div class="action-item"><span style="font-size:8px;color:#ef4444">🔴</span><span><b>'+a.id+'</b> '+a.item+'<br><span style="font-size:11px;color:#64748b">'+a.owner+' - due '+a.due+'</span></span></div>').join('');
-    document.getElementById('stat-open').textContent=seed.filter(a=>a.status==='Open').length;
-  }else{
-    const o=Object.values(acts).filter(a=>a.status==='Open');
-    document.getElementById('action-list').innerHTML=o.slice(0,5).map(a=>'<div class="action-item"><span style="font-size:8px;color:#ef4444">🔴</span><span><b>'+a.id+'</b> '+a.item+'<br><span style="font-size:11px;color:#64748b">'+a.owner+' - due '+a.due+'</span></span></div>').join('');
-    document.getElementById('stat-open').textContent=o.length;
-    document.getElementById('actions-full').innerHTML=Object.values(acts).map(a=>'<div class="action-item" style="font-size:13px"><b>'+a.id+'</b> '+a.item+' - <span style="color:#64748b">'+a.owner+', due '+a.due+' ['+a.status+']</span></div>').join('');
-  }
-
-  // Recent
-  document.getElementById('activity-feed').innerHTML='Paint walkway markings added<br>Fire extinguisher zone flagged<br>CEO call - Jason confirmed title<br>Bonnie Swim incident logged<br>Gordon Ruggles rotation log'.split('<br>').map(r=>'<div style="padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.05)">'+r+'</div>').join('');
-
-  // Projects
-  const projs=[
-    {id:'P-001',name:'Shrink wrap barrier',s:'Open'},{id:'P-002',name:'Dry ice blasting trial',s:'Open'},{id:'P-003',name:'Rotator log rollout',s:'Active'},
-    {id:'P-004',name:'CA training for supervisors',s:'Open'},{id:'P-005',name:'Furnace fall protection',s:'Open'},{id:'P-006',name:'Gas heater (Soham)',s:'Open'},
-    {id:'P-007',name:'Line 1 meeting setup',s:'Open'},{id:'P-008',name:'Huntingdon transition',s:'Plan'},{id:'P-009',name:'Training matrix',s:'Open'},
-  ];
-  document.getElementById('projects-full').innerHTML=projs.map(p=>'<div class="action-item" style="font-size:13px"><span style="font-size:9px">'+{'Active':'🟡','Open':'🔴','Plan':'🟢'}[p.s]+'</span> <b>'+p.id+'</b> '+p.name+' <span style="color:#64748b">['+p.s+']</span></div>').join('');
-
-  // Incidents
-  const incs=[
-    {id:'BONNIE',date:'11-7',e:'Bonnie Swim',t:'Recordable',d:'Tripped on pallet, groin injury/hospital',s:'Investigation'},
-    {id:'RUGGLES',date:'10-28',e:'Gordon Ruggles',t:'Near Miss',d:'Repetitive strain, left wrist/hand',s:'Closed'},
-  ];
-  document.getElementById('incidents-full').innerHTML=incs.map(i=>'<div class="action-item" style="font-size:13px"><b>'+i.id+'</b> ['+i.t+'] '+i.e+' - '+i.d+' - <span style="color:#64748b">'+i.s+'</span></div>').join('');
+async function load() {
+  const data = await fb('/corrective_actions');
+  actions = data ? Object.values(data) : [];
+  render();
 }
 
-init();
-</script></body></html>
+function render() {
+  // Bonnie incident
+  let list = [...actions];
+  // Add Bonnie as a pinned reference
+  const bonnie = {id:'INCIDENT-BONNIE',item:'Bonnie Swim - 11/7 recordable (pallet trip, hospital, groin) - USE for CA training case',owner:'Justin',due:'N/A',status:'Investigation',visibility:'Management'};
+  
+  let filtered = list;
+  if(filter==='open') filtered = list.filter(a => a.status==='Open');
+  else if(filter==='overdue') filtered = list.filter(a => a.status==='Open' && parseInt(a.due?.split('/')[1]||99) < new Date().getDate());
+  else if(filter==='mine') filtered = list.filter(a => (a.owner||'').toLowerCase().includes('justin'));
+  else if(filter==='management') filtered = list.filter(a => a.visibility!=='Private');
+  
+  // Sort: open first, then by due date
+  filtered.sort((a,b) => {
+    const s = {'Open':0,'In Progress':1,'Waiting':2,'Done':3,'Investigation':0};
+    return (s[a.status]||9) - (s[b.status]||9) || ((a.due||'99').localeCompare(b.due||'99'));
+  });
+  
+  document.getElementById('subtitle').textContent = filtered.length + ' actions (' + list.length + ' total)';
+  
+  const div = document.getElementById('action-list');
+  if(!filtered.length && filter!=='all') {
+    div.innerHTML = '<div style="text-align:center;padding:40px;color:#64748b;font-size:14px">No ' + filter + ' actions.</div>';
+    return;
+  }
+  
+  const items = filtered.length ? filtered : [{
+    id:'💡',item:'No corrective actions yet. Click + Add to create one.',owner:'',due:'',status:'',visibility:''
+  }];
+  
+  let html = '<div style="margin-bottom:8px;padding:6px 10px;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.25);border-radius:6px;font-size:11px;color:#f59e0b">📌 Use this to track corrective actions for all incidents.</div>';
+  
+  // Show the Bonnie incident as a pinned example at top
+  html += '<div class="action-card open"><div style="flex:1"><div style="display:flex;gap:4px;flex-wrap:wrap"><span class="action-id">INCIDENT</span><span class="badge badge-open">Recordable</span></div><div class="action-title">Bonnie Swim - 11/7 - Tripped on uneven pallet, sent to hospital</div><div class="action-meta">Real incident from Saturday — correctives: paint walkway, mark pallet zone, fire extinguisher clearance. Use this to train supervisors on proper corrective actions.</div></div></div>';
+  
+  html += items.map(a => {
+    const cls = a.status==='Done'?'done':a.status==='Open'||a.status==='Investigation'?'open':a.status==='Waiting'?'open':'';
+    const days = a.due && a.due!=='N/A' ? '<span style="color:'+(parseInt(a.due.split('/')[1]||99)<new Date().getDate()&&a.status!=='Done'?'#ef4444':'#64748b')+'">Due ' + a.due + '</span>' : '';
+    const vis = a.visibility==='Private' ? '<span class="badge badge-private">Private</span>' : '';
+    const badge = a.status==='Open'?'<span class="badge badge-open">Open</span>':a.status==='In Progress'?'<span class="badge badge-active">Active</span>':a.status==='Done'?'<span class="badge badge-closed">Done</span>':a.status==='Investigation'?'<span class="badge badge-open">Investigation</span>':'<span class="badge badge-open">'+a.status+'</span>';
+    return '<div class="action-card ' + cls + '"><div style="flex:1"><div style="display:flex;gap:4px;flex-wrap:wrap"><span class="action-id">' + (a.id||'CA-?') + '</span>' + badge + vis + '</div><div class="action-title">' + a.item + '</div><div class="action-meta"><b>' + (a.owner||'?') + '</b> ' + days + '</div></div></div>';
+  }).join('');
+  
+  if(filtered.length > 0) {
+    html += '<div style="margin-top:12px;font-size:10px;color:#475569;text-align:center">Tap + Add to create a new action. Reload to refresh from cloud.</div>';
+  }
+  div.innerHTML = html;
+}
+
+function setFilter(f) {
+  filter=f;
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('f-'+f).classList.add('active');
+  render();
+}
+
+function showAdd(){document.getElementById('modal').style.display='flex';}
+function hideAdd(){document.getElementById('modal').style.display='none';}
+function quickOwner(inp){if(!inp.value)inp.value='Justin';}
+
+async function saveAction() {
+  const item = document.getElementById('ca-item').value.trim();
+  const owner = document.getElementById('ca-owner').value.trim() || 'Justin';
+  const due = document.getElementById('ca-due').value.trim() || 'N/A';
+  const vis = document.getElementById('ca-vis').value;
+  const status = document.getElementById('ca-status').value;
+  if(!item) { alert('Enter an action description'); return; }
+  const id = 'CA-' + String(actions.length + 1).padStart(3,'0');
+  await fb('/corrective_actions/' + id, 'PUT', {id,item,owner,due,visibility:vis,status});
+  hideAdd();
+  // Reset form
+  document.getElementById('ca-item').value='';
+  document.getElementById('ca-owner').value='';
+  document.getElementById('ca-due').value='';
+  await load();
+}
+
+load();
+</script>
+</body></html>
