@@ -149,10 +149,11 @@ function render() {
     var owner = a.owner ? ' <b>' + a.owner + '</b>' : "";
     var hasNotes = a.notes ? ' <span style="color:#f59e0b;font-size:9px">📋</span>' : "";
     var hasPhoto = a.photo ? ' <span style="color:#3b82f6;font-size:9px">🖼</span>' : "";
+    var photoThumb = a.photo ? '<div style="width:45px;height:45px;border-radius:4px;border:1px solid #475569;background:url('+a.photo+') center/cover;flex-shrink:0;margin-right:8px"></div>' : "";
     var hasCmts = a.comments && Object.keys(a.comments).length > 0 ? ' <span style="color:#60a5fa;font-size:9px">💬</span>' : "";
     var cid = "'" + a.id + "'";
     var editBtn = isAdmin ? '<button class="btn btn-ghost" onclick="event.stopPropagation();editAction(' + cid + ')" style="font-size:8px;padding:1px 5px;margin-left:4px">✎</button>' : "";
-    html += '<div class="card" onclick="showDetail(' + cid + ')"><div style="display:flex;gap:3px;flex-wrap:wrap">' + tag + '<span class="cid">' + (a.id||"") + '</span>' + hasNotes + hasPhoto + hasCmts + editBtn + '</div><div class="ct">' + (a.item||"") + '</div><div class="cm">' + owner + due + '</div></div>';
+    html += '<div class="card" onclick="showDetail(' + cid + ')"><div style="display:flex;gap:3px;flex-wrap:wrap">' + tag + '<span class="cid">' + (a.id||"") + '</span>' + hasNotes + hasPhoto + hasCmts + editBtn + '</div><div style="display:flex;gap:8px;align-items:flex-start">' + photoThumb + '<div style="flex:1"><div class="ct">' + (a.item||"") + '</div><div class="cm">' + owner + due + '</div></div></div></div>';
   }
   if (isAdmin) html += '<div style="margin-top:8px;text-align:center"><button class="btn btn-primary" onclick="showAdd()" style="padding:6px 20px;font-size:12px">+ Add Action</button></div>';
   div.innerHTML = html;
