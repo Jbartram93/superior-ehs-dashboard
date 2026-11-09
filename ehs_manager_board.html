@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Superior EHS — Corrective Action Board</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f8fafc;color:#1e293b;padding:16px}
+h1{font-size:18px;font-weight:700;margin-bottom:4px}
+.sub{font-size:12px;color:#64748b;margin-bottom:12px}
+.filters{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.filt{font-size:11px;padding:4px 10px;border-radius:5px;background:#e2e8f0;color:#475569;cursor:pointer;border:none;font-weight:600}
+.filt.active{background:#3b82f6;color:#fff}
+.card{background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:10px 12px;margin-bottom:6px;border-left:3px solid #f59e0b}
+.card.done{border-left-color:#22c55e;opacity:0.6}
+.card.investigation{border-left-color:#8b5cf6}
+.card-id{font-size:10px;color:#94a3b8;font-weight:700}
+.card-title{font-size:13px;font-weight:600;margin:2px 0;line-height:1.3}
+.card-meta{font-size:11px;color:#64748b}
+.badge{font-size:9px;padding:1px 6px;border-radius:3px;font-weight:600;display:inline-block;margin-right:4px}
+.badge-open{background:#fef3c7;color:#92400e}
+.badge-active{background:#dbeafe;color:#1e40af}
+.badge-done{background:#d1fae5;color:#065f46}
+.empty{padding:40px;text-align:center;color:#94a3b8;font-size:14px}
+.footer{font-size:10px;color:#94a3b8;text-align:center;margin-top:16px}
+</style>
+</head>
+<body>
+
+<h1>✅ Corrective Action Board</h1>
+<div class="sub" id="subtitle"></div>
+
+<div class="filters">
+  <button class="filt active" onclick="setF('all')">All</button>
+  <button class="filt" onclick="setF('open')">Open</button>
+  <button class="filt" onclick="setF('overdue')">Overdue</button>
+  <button class="filt" onclick="setF('mine')">My Queue</button>
+</div>
+
+<div id="list"></div>
+<div class="footer" id="footer"></div>
+
+<script>
+const DB =  + fc["databaseURL"] + '';
+let all = [];
+let flt = 'all';
+
+async function fb(p,m='GET'){{
+  const o={{method:m,headers:{{'Content-Type':'application/json'}}}};
+  try{{return await(await fetch(DB+p+'.json',o)).json();}}catch(e){{return null;}}
+}}
+
+async function load(){{
+  const d = await fb('/corrective_actions');
+  all = d ? Object.values(d) : [];
+  render();
+}}
+
+function render(){{
+  let items = [...all];
+  if(flt==='open') items = items.filter(a => a.status!=='Done');
+  else if(flt==='overdue') items = items.filter(a => a.status!=='Done' && a.due && a.due!=='N/A');
+  else if(flt==='mine') items = items.filter(a => (a.owner||'').toLowerCase().includes('bryan')||(a.owner||'').toLowerCase().includes('matt')||(a.owner||'').toLowerCase().includes('susan')||(a.owner||'').toLowerCase().includes('supervisor'));
+  
+  items.sort((a,b)=>{{
+    const so={{'Open':0,'In Progress':1,'Waiting':2,'Done':3,'Investigation':0}};
+    return (so[a.status]||9)-(so[b.status]||9) || ((a.due||'Z').localeCompare(b.due||'Z'));
+  }});
+  
+  document.getElementById('subtitle').textContent = items.length + ' of ' + all.length + ' corrective actions | Superiors & Management view';
+  
+  const dv = document.getElementById('list');
+  if(!items.length){ dv.innerHTML='<div class="empty">No corrective actions to show.</div>'; return; }
+  
+  dv.innerHTML = items.map(a => {{
+    const c = a.status==='Done'?'done':a.status==='Investigation'?'investigation':'';
+    const b = a.status==='Open'||a.status==='Investigation'?'<span class="badge badge-open">'+a.status+'</span>':a.status==='In Progress'?'<span class="badge badge-active">Active</span>':a.status==='Done'?'<span class="badge badge-done">Done</span>':'';
+    const d = a.due && a.due!=='N/A' ? '<span style="color:'+(a.status!=='Done'?'#dc2626':'#64748b')+'">Due ' + a.due + '</span>' : '';
+    return '<div class="card '+c+'"><div style="display:flex;gap:4px;flex-wrap:wrap"><span class="card-id">'+(a.id||'')+'</span>'+b+'</div><div class="card-title">'+a.item+'</div><div class="card-meta"><b>'+(a.owner||'?')+'</b> '+d+'</div></div>';
+  }}).join('');
+}}
+
+function setF(f){{
+  flt=f;
+  document.querySelectorAll('.filt').forEach(b=>b.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  render();
+}}
+
+document.getElementById('footer').textContent = 'Superior Huntingdon Composites — Last updated ' + new Date().toLocaleString() + ' | Contact Justin for issues';
+
+load();
+</script>
+</body></html>
