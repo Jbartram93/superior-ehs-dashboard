@@ -55,7 +55,9 @@ body{background:#0b1120;color:#e2e8f0;font-family:Segoe UI,Arial,sans-serif;padd
   <div class="tagline">Justin · EHS Leader</div>
 </div>
 
-<div class="cal" id="cal"></div>
+<div style="text-align:right;margin-bottom:8px">
+  <a href="tg://resolve?domain=Hermione_Grid_bot" style="display:inline-block;padding:6px 12px;background:#3b82f6;color:#fff;border-radius:6px;font-size:11px;font-weight:600;text-decoration:none;">&#9993; Talk to Justin</a>
+</div><div class="cal" id="cal"></div>
 
 <div class="section-title">This Week's Focus</div>
 <div id="weekly-todos"></div>
@@ -177,5 +179,10 @@ function showDetail(id,text,lane){
   document.getElementById('modal').classList.add('show');
 }
 </script>
-</body>
+<div style="position:fixed;bottom:0;left:0;right:0;padding:6px 14px;background:#0b1120;border-top:1px solid #334155;display:flex;gap:6px;justify-content:center;z-index:50">
+  <a href="tg://resolve?domain=Hermione_Grid_bot" style="flex:1;padding:8px;background:#3b82f6;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;text-align:center;text-decoration:none;">&#9993; Message Justin (EHS Coach)</a>
+</div>
+<style>
+@media(max-width:800px){body{padding-bottom:48px}}
+</style></body>
 </html>
