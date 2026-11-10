@@ -24,8 +24,10 @@ body{background:#0b1120;color:#e2e8f0;font-family:Segoe UI,Arial,sans-serif;padd
 .evt-tag{display:inline-block;padding:0 3px;margin:1px 0;border-radius:2px;font-size:8px;background:rgba(59,130,246,0.2);color:#60a5fa;line-height:1.2;width:100%}
 .evt-tag.o{background:rgba(245,158,11,0.15);color:#f59e0b}
 .evt-tag.g{background:rgba(34,197,94,0.12);color:#22c55e}
-
 .section-title{font-size:10px;font-weight:700;color:#60a5fa;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;margin-top:8px}
+.action-row{display:flex;gap:6px;margin-bottom:4px}
+.action-btn{flex:1;text-align:center;padding:6px;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;background:#1e293b;border:1px solid #334155;color:#e2e8f0}
+.action-btn:active{background:#1e3a5f;border-color:#3b82f6}
 .lanes{display:flex;gap:6px}
 .lane{flex:1;background:#1e293b;border:1px solid #334155;border-radius:5px;padding:8px}
 .lane-hdr{font-size:9px;font-weight:700;color:#60a5fa;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid #334155;padding-bottom:4px;margin-bottom:4px}
@@ -37,7 +39,6 @@ body{background:#0b1120;color:#e2e8f0;font-family:Segoe UI,Arial,sans-serif;padd
 .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:4px}
 .dr{background:#ef4444}.da{background:#f59e0b}.db{background:#3b82f6}.dg{background:#22c55e}
 .ti-text{flex:1;line-height:1.2}
-
 .modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity 0.15s}
 .modal.show{opacity:1;pointer-events:auto}
 .modal-box{background:#1e293b;border:1px solid rgba(59,130,246,0.3);border-radius:8px;padding:14px 16px;width:85%;max-width:350px}
@@ -46,6 +47,10 @@ body{background:#0b1120;color:#e2e8f0;font-family:Segoe UI,Arial,sans-serif;padd
 .modal-box button{padding:8px;border:none;border-radius:5px;font-size:12px;font-weight:600;cursor:pointer;width:100%}
 .btn-primary{background:#3b82f6;color:#fff}
 .btn-ghost{background:transparent;color:#94a3b8;border:1px solid #475569!important;margin-top:4px}
+.bot-bar{display:flex;gap:6px;margin-top:10px;padding-top:8px;border-top:1px solid #334155}
+.bot-btn{flex:1;padding:8px;border-radius:6px;font-size:12px;font-weight:600;text-align:center;text-decoration:none}
+.bot-btn.chat{background:#3b82f6;color:#fff}
+.bot-btn.dump{background:#0f172a;color:#f59e0b;border:1px solid #f59e0b}
 </style>
 </head>
 <body>
@@ -55,11 +60,14 @@ body{background:#0b1120;color:#e2e8f0;font-family:Segoe UI,Arial,sans-serif;padd
   <div class="tagline">Justin · EHS Leader</div>
 </div>
 
-<div style="text-align:right;margin-bottom:8px">
-  <a href="tg://resolve?domain=Hermione_Grid_bot" style="display:inline-block;padding:6px 10px;background:#3b82f6;color:#fff;border-radius:6px;font-size:11px;font-weight:600;text-decoration:none;">&#9993; Chat</a> <a href="braindump.html" style="display:inline-block;padding:6px 10px;background:#1e293b;color:#f59e0b;border:1px solid #f59e0b;border-radius:6px;font-size:11px;font-weight:600;text-decoration:none;">&#128221; Brain Dump</a>
-</div><div class="cal" id="cal"></div>
+<div class="cal" id="cal"></div>
 
-<div class="section-title">This Week's Focus</div>
+<div class="action-row">
+  <div class="action-btn" onclick="window.location.href='interactive_dashboard.html'">&#9881; Dashboard</div>
+  <div class="action-btn" onclick="window.location.href='braindump.html'">&#128221; Brain Dump</div>
+</div>
+
+<div class="section-title">Today's Focus</div>
 <div id="weekly-todos"></div>
 
 <div class="section-title">Queue</div>
@@ -67,6 +75,11 @@ body{background:#0b1120;color:#e2e8f0;font-family:Segoe UI,Arial,sans-serif;padd
   <div class="lane"><div class="lane-hdr">NOW</div><div id="lane-now"></div></div>
   <div class="lane"><div class="lane-hdr">NEXT</div><div id="lane-next"></div></div>
   <div class="lane"><div class="lane-hdr">LATER</div><div id="lane-later"></div></div>
+</div>
+
+<div class="bot-bar">
+  <a href="tg://resolve?domain=Hermione_Grid_bot" class="bot-btn chat">&#9993; Chat</a>
+  <a href="braindump.html" class="bot-btn dump">&#128221; Brain Dump</a>
 </div>
 
 <div id="modal" class="modal">
@@ -89,19 +102,17 @@ firebase.initializeApp({
   appId: "1:887407575500:web:ab6b5ec5f89e79b2eca10a9"
 });
 var db = firebase.database();
-
 var d=new Date(),w=d.getDay(),st=new Date(d);st.setDate(d.getDate()-w);
 var mmm=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 var ddd=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-
 var h=d.getHours(),m=d.getMinutes(),a=h>=12?'PM':'AM';h=h%12||12;
 document.getElementById('clock').innerHTML=h+':'+(m<10?'0':'')+m+' '+a;
 document.getElementById('date').innerHTML=ddd[w]+', '+mmm[d.getMonth()]+' '+d.getDate();
 
-// Calendar
+// Calendar events
 var events=[
-  [2,"2:30pm","EHS Leadership Meeting"],
   [2,"9:00am","SCC Prod Call"],
+  [2,"2:30pm","EHS Leadership Meeting"],
   [3,"10:00am","Dry Ice Blasting"],
   [4,"10:30am","Safety Walkthrough"],
   [5,"1:00pm","Weekly Planning"],
@@ -109,11 +120,10 @@ var events=[
 var ch="";
 for(var i=0;i<7;i++){
   var dt=new Date(st);dt.setDate(st.getDate()+i);
-  var num=dt.getDate(),dn=ddd[i],td=(i===w?' today':''),ev="",cls="";
+  var num=dt.getDate(),dn=ddd[i],td=(i===w?' today':''),ev="";
   for(var j=0;j<events.length;j++){
     if(events[j][0]===i){
-      cls=(events[j][0]===w?' o':'');
-      ev+='<span class="evt-tag'+cls+'">'+events[j][1]+'</span>';
+      ev+='<span class="evt-tag'+(events[j][0]===w?' o':'')+'">'+events[j][1]+'</span>';
     }
   }
   ch+='<div class="day'+td+'" onclick="showDay(\''+dn+'\','+num+')"><div class="day-name">'+dn+'</div><div class="day-num">'+num+'</div>'+ev+'</div>';
@@ -122,16 +132,12 @@ document.getElementById('cal').innerHTML=ch;
 
 function showDay(dn,num){
   var evs=[];
-  for(var j=0;j<events.length;j++){
-    if(events[j][0]===w){evs.push(events[j][1]+' - '+events[j][2]);}
-  }
-  var txt=evs.length?evs.join('<br>'):'No events today';
+  for(var j=0;j<events.length;j++){if(events[j][0]===w){evs.push(events[j][1]+' - '+events[j][2]);}}
   document.getElementById('modal-title').textContent=dn+' '+num;
   document.getElementById('modal-sub').textContent='';
-  document.getElementById('modal-body').innerHTML=txt;
+  document.getElementById('modal-body').innerHTML=evs.length?evs.join('<br>'):'No events today';
   document.getElementById('modal').classList.add('show');
 }
-
 function closeModal(){document.getElementById('modal').classList.remove('show');}
 document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
 
@@ -140,49 +146,37 @@ var ref=db.ref('todos');
 ref.on('value',function(s){
   var data=s.val();
   var items=data?Object.values(data):[];
-  // Render weekly
+  // Weekly focus (NOW items, not done)
   var wh="";
   for(var i=0;i<items.length;i++){
     var t=items[i];
     if(t.lane!=='now') continue;
-    if(t.done){wh+='<div class="ti done" onclick="todoClick(\''+t.id+'\',false)"><div class="cb checked">&#10003;</div><div class="ti-text">'+t.text+'</div></div>';}
-    else{wh+='<div class="ti" onclick="todoClick(\''+t.id+'\',true)"><div class="cb"></div><div class="ti-text">'+t.text+'</div></div>';}
+    var ckd=t.done?'checked':'';
+    if(t.done) wh+='<div class="ti done" onclick="toggleTodo(\''+t.id+'\',false)"><div class="cb checked">&#10003;</div><div class="ti-text">'+t.text+'</div></div>';
+    else wh+='<div class="ti" onclick="toggleTodo(\''+t.id+'\',true)"><div class="cb"></div><div class="ti-text">'+t.text+'</div></div>';
   }
-  document.getElementById('weekly-todos').innerHTML=wh;
-  
-  // Render lanes
+  document.getElementById('weekly-todos').innerHTML=wh||'<div style="font-size:11px;color:#475569">Add tasks via Brain Dump or chat</div>';
+  // Lanes
   var lanes={now:[],next:[],later:[]};
-  for(var i=0;i<items.length;i++){
-    var t=items[i];
-    if(lanes[t.lane]) lanes[t.lane].push(t);
-  }
+  for(var i=0;i<items.length;i++){var t=items[i];if(lanes[t.lane]) lanes[t.lane].push(t);}
+  var colMap={now:'dr',next:'db',later:'dg'};
   for(var l in lanes){
     var html="";
     for(var i=0;i<lanes[l].length;i++){
       var t=lanes[l][i];
-      var done=t.done;
-      var col=l==='now'?'dr':l==='next'?'db':'dg';
-      html+='<div class="ti" onclick="if(!done)showDetail(\''+t.id+'\',\''+t.text+'\',\''+l+'\')"><span class="dot '+col+'"></span><div class="ti-text" style="'+(done?'text-decoration:line-through;opacity:0.4':'')+'">'+t.text+'</div></div>';
+      html+='<div class="ti" onclick="showDetail(\''+t.id+'\',\''+t.text.replace(/'/g,"\\'")+'\')"><span class="dot '+colMap[l]+'" style="opacity:'+(t.done?'0.3':'1')+'"></span><div class="ti-text" style="'+(t.done?'text-decoration:line-through;opacity:0.4':'')+'">'+t.text+'</div></div>';
     }
     document.getElementById('lane-'+l).innerHTML=html||'<div style="font-size:10px;color:#475569">Empty</div>';
   }
 });
 
-function todoClick(id,done){
-  db.ref('todos/'+id+'/done').set(done);
-}
-
-function showDetail(id,text,lane){
+function toggleTodo(id,done){db.ref('todos/'+id+'/done').set(done);}
+function showDetail(id,text){
   document.getElementById('modal-title').textContent=text;
-  document.getElementById('modal-sub').textContent=lane.toUpperCase()+' | Tap checkbox to mark done';
+  document.getElementById('modal-sub').textContent='Tap to mark done';
   document.getElementById('modal-body').innerHTML='<button class="btn-primary" onclick="db.ref(\'todos/'+id+'/done\').set(true);closeModal()">Mark as Done</button>';
   document.getElementById('modal').classList.add('show');
 }
 </script>
-<div style="position:fixed;bottom:0;left:0;right:0;padding:6px 14px;background:#0b1120;border-top:1px solid #334155;display:flex;gap:6px;justify-content:center;z-index:50">
-  <a href="tg://resolve?domain=Hermione_Grid_bot" style="flex:1;padding:8px;background:#3b82f6;color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:600;text-align:center;text-decoration:none;">&#9993; Chat</a><a href="braindump.html" style="flex:1;padding:8px;background:#0f172a;color:#f59e0b;border:1px solid #f59e0b;border-radius:6px;font-size:12px;font-weight:600;text-align:center;text-decoration:none;">&#128221; Brain Dump</a>
-</div>
-<style>
-@media(max-width:800px){body{padding-bottom:48px}}
-</style></body>
+</body>
 </html>
