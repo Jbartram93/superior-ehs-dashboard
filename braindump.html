@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Brain Dump</title>
+<script src="firebase/firebase-app-compat.js"></script>
+<script src="firebase/firebase-database-compat.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0b1120;color:#e2e8f0;font-family:Segoe UI,Arial,sans-serif;padding:16px;min-height:100vh}
+h1{font-size:18px;font-weight:700;margin-bottom:4px;color:#f8fafc}
+.sub{font-size:11px;color:#64748b;margin-bottom:12px;line-height:1.3}
+textarea{width:100%;min-height:200px;padding:10px;background:#1e293b;border:1px solid #334155;border-radius:6px;color:#e2e8f0;font-size:14px;line-height:1.4;resize:vertical;font-family:Segoe UI,Arial,sans-serif}
+textarea:focus{outline:none;border-color:#3b82f6}
+.btn-row{display:flex;gap:6px;margin-top:8px}
+.btn{flex:1;padding:10px;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer}
+.btn-send{background:#3b82f6;color:#fff}
+.btn-send:active{background:#2563eb}
+.btn-clear{background:transparent;border:1px solid #475569;color:#94a3b8}
+.btn-back{background:rgba(59,130,246,0.1);color:#60a5fa;text-decoration:none;display:inline-block;padding:6px 10px;border-radius:4px;font-size:11px;margin-bottom:10px}
+#status{font-size:11px;color:#22c55e;margin-top:6px;min-height:16px;transition:opacity 0.3s}
+#history{background:#0f172a;border:1px solid #334155;border-radius:6px;padding:8px;margin-top:10px;max-height:150px;overflow-y:auto}
+.h-item{font-size:11px;color:#94a3b8;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.03);line-height:1.2}
+.h-item .ts{font-size:9px;color:#475569}
+</style>
+</head>
+<body>
+
+<a href="interactive_dashboard.html" class="btn-back">&larr; Back to Dashboard</a>
+<h1>Brain Dump</h1>
+<div class="sub">Just type whatever's on your mind. I'll read this and organize it into your plan.</div>
+
+<textarea id="note" placeholder="What's on your mind? Random thoughts, ideas, worries, observations, people to talk to... just type."></textarea>
+
+<div class="btn-row">
+  <button class="btn btn-send" id="send-btn">Send to Justin</button>
+  <button class="btn btn-clear" onclick="clearNote()">Clear</button>
+</div>
+
+<div id="status"></div>
+
+<div id="history" style="display:none">
+  <div style="font-size:10px;color:#60a5fa;font-weight:600;margin-bottom:4px">Recent sends</div>
+  <div id="history-list"></div>
+</div>
+
+<script>
+firebase.initializeApp({
+  apiKey: "AIzaSyDmJ3hbSyfGp0nP36g-34UgKi1jaWTPf1g",
+  authDomain: "superior-ehs.firebaseapp.com",
+  databaseURL: "https://superior-ehs-default-rtdb.firebaseio.com",
+  projectId: "superior-ehs",
+  storageBucket: "superior-ehs.appspot.com",
+  messagingSenderId: "887407575500",
+  appId: "1:887407575500:web:ab6b5ec5f89e79b2eca10a9"
+});
+var db = firebase.database();
+
+document.getElementById('send-btn').addEventListener('click', function() {
+  var text = document.getElementById('note').value.trim();
+  if (!text) { showStatus('Write something first.', '#f59e0b'); return; }
+  this.disabled = true;
+  this.textContent = 'Sending...';
+  var key = 'note_' + Date.now();
+  db.ref('braindump/' + key).set({
+    text: text,
+    timestamp: new Date().toLocaleString(),
+    read: false
+  }, function(err) {
+    if (err) { showStatus('Error: ' + err.message, '#ef4444'); }
+    else {
+      showStatus('Sent! I\'ll review this shortly.', '#22c55e');
+      document.getElementById('note').value = '';
+      loadHistory();
+    }
+    document.getElementById('send-btn').disabled = false;
+    document.getElementById('send-btn').textContent = 'Send to Justin';
+  });
+});
+
+function clearNote() {
+  if (confirm('Clear what you typed?')) {
+    document.getElementById('note').value = '';
+    showStatus('Cleared.', '#64748b');
+  }
+}
+
+function showStatus(msg, color) {
+  var s = document.getElementById('status');
+  s.textContent = msg;
+  s.style.color = color;
+  setTimeout(function() { s.textContent = ''; }, 3000);
+}
+
+function loadHistory() {
+  var ref = db.ref('braindump');
+  ref.orderByKey().limitToLast(5).once('value', function(snap) {
+    var data = snap.val();
+    if (!data) return;
+    var keys = Object.keys(data).reverse();
+    if (keys.length === 0) return;
+    document.getElementById('history').style.display = 'block';
+    var html = '';
+    for (var i = 0; i < keys.length; i++) {
+      var n = data[keys[i]];
+      html += '<div class="h-item"><span class="ts">' + (n.timestamp || '') + '</span> ' + (n.text.length > 60 ? n.text.substring(0,60) + '...' : n.text) + '</div>';
+    }
+    document.getElementById('history-list').innerHTML = html;
+  });
+}
+loadHistory();
+</script>
+</body>
+</html>
