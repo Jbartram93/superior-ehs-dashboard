@@ -29,12 +29,12 @@ textarea:focus{outline:none;border-color:#3b82f6}
 
 <a href="interactive_dashboard.html" class="btn-back">&larr; Back to Dashboard</a>
 <h1>Brain Dump</h1>
-<div class="sub">Just type whatever's on your mind. Hermes reads this and organizes it into your plan.</div>
+<div class="sub">Just type whatever's on your mind. Hermione reads this and organizes it into your plan.</div>
 
 <textarea id="note" placeholder="What's on your mind? Random thoughts, ideas, worries, observations, people to talk to... just type."></textarea>
 
 <div class="btn-row">
-  <button class="btn btn-send" id="send-btn">Send to Hermes</button>
+  <button class="btn btn-send" id="send-btn">Send to Hermione</button>
   <button class="btn btn-clear" onclick="clearNote()">Clear</button>
 </div>
 
@@ -75,7 +75,7 @@ document.getElementById('send-btn').addEventListener('click', function() {
       loadHistory();
     }
     document.getElementById('send-btn').disabled = false;
-    document.getElementById('send-btn').textContent = 'Send to Hermes';
+    document.getElementById('send-btn').textContent = 'Send to Hermione';
   });
 });
 
