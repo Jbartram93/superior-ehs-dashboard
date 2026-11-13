@@ -180,11 +180,11 @@ ref.on('value',function(s){
   }
 });
 
-function toggleTodo(id,done){
-  db.ref('todos/'+id+'/done').set(done);
+function toggleTodo(id,done,dateKey){
+  var updates={}; updates['done']=done; updates['date']=dateKey||todayKey; db.ref('todos/'+id).update(updates);
 }
 
-function showDetail(id,text){
+function showDetail(id,text,dateKey){
   document.getElementById('modal-title').textContent=text;
   document.getElementById('modal-sub').textContent='Tap to mark done';
   document.getElementById('modal-body').innerHTML='<button class="btn-primary" onclick="db.ref(\'todos/'+id+'/done\').set(true);closeModal()">Mark as Done</button><button class="btn-primary" style="background:transparent;color:#64748b;margin-top:4px;border:1px solid #475569" onclick="closeModal()">Cancel</button>';
